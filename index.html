@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyVocab — Python 编程英语词卡</title>
+<style>
+:root{
+  --bg:#0f0f1a;--bg2:#1a1a2e;--bg3:#25253d;
+  --accent:#7c5cfc;--accent2:#ff6b6b;--accent3:#4ecdc4;--accent4:#ffd93d;
+  --text:#e8e8f0;--text2:#9999b3;
+  --radius:16px;--glow:0 0 30px rgba(124,92,252,.25);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+.page{display:none;animation:fadeUp .4s ease}.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+@keyframes comboPop{0%{transform:scale(1)}50%{transform:scale(1.6)}100%{transform:scale(1)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes particle{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--px),var(--py)) scale(0)}}
+@keyframes nodePulse{0%,100%{box-shadow:0 0 0 0 rgba(255,217,61,.5)}50%{box-shadow:0 0 0 14px rgba(255,217,61,0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.container{max-width:900px;margin:0 auto;padding:20px 16px 100px;}
+.glass{background:rgba(255,255,255,.04);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all .25s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#6a4ce0;box-shadow:var(--glow);transform:translateY(-2px)}
+.btn-secondary{background:var(--bg3);color:var(--text);border:1px solid rgba(255,255,255,.1)}
+.btn-secondary:hover{border-color:var(--accent);transform:translateY(-2px)}
+.btn-danger{background:var(--accent2);color:#fff}
+.btn-sm{padding:8px 18px;font-size:13px;border-radius:8px}
+
+.topbar{position:sticky;top:0;z-index:100;background:rgba(15,15,26,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-size:20px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar-score{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--accent4)}
+
+.navbar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(15,15,26,.9);backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-around;padding:8px 0 env(safe-area-inset-bottom,8px)}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 16px;font-size:11px;color:var(--text2);cursor:pointer;transition:all .25s;border-radius:10px}
+.nav-item:hover{color:var(--text)}
+.nav-item.active{color:var(--accent)}
+.nav-item .icon{font-size:22px;transition:transform .25s}
+.nav-item.active .icon{transform:scale(1.15)}
+
+/* ══ 首页地图 ══ */
+.hero{text-align:center;padding:32px 0 12px}
+.hero h1{font-size:30px;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent3),var(--accent4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:var(--text2);font-size:14px}
+.stats-row{display:flex;gap:10px;margin:20px 0;justify-content:center;flex-wrap:wrap}
+.stat-card{padding:14px 20px;text-align:center;border-radius:14px;min-width:90px}
+.stat-card .val{font-size:24px;font-weight:800;display:inline-block}
+.stat-card .label{font-size:11px;color:var(--text2);margin-top:2px}
+
+.map-container{position:relative;padding:10px 0 20px}
+.map-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.map-node{position:relative;z-index:1;display:flex;align-items:center;gap:14px;padding:16px 20px;border-radius:16px;background:var(--bg2);border:2px solid rgba(255,255,255,.06);cursor:pointer;transition:all .35s;margin-bottom:12px}
+.map-node:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:var(--glow)}
+.map-node.locked{opacity:.4;cursor:not-allowed;filter:grayscale(.5)}
+.map-node.locked:hover{transform:none;border-color:rgba(255,255,255,.06);box-shadow:none}
+.map-node.current{border-color:var(--accent4);animation:nodePulse 2s infinite}
+.map-node.completed{border-color:var(--accent3);background:rgba(78,205,196,.06)}
+.map-node.completed:hover{border-color:var(--accent3)}
+.node-num{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex-shrink:0}
+.map-node.completed .node-num{background:var(--accent3);color:#fff}
+.map-node.current .node-num{background:var(--accent4);color:#1a1a2e;animation:float 2.5s ease-in-out infinite}
+.map-node.locked .node-num{background:var(--bg3);color:var(--text2)}
+.map-node:not(.completed):not(.current):not(.locked) .node-num{background:rgba(124,92,252,.2);color:var(--accent)}
+.node-icon{font-size:30px;flex-shrink:0}
+.node-info{flex:1;min-width:0}
+.node-info h3{font-size:15px;font-weight:700;margin-bottom:2px}
+.node-info p{font-size:12px;color:var(--text2)}
+.node-info .desc{font-size:11px;color:var(--text2);margin-top:2px;font-style:italic}
+.node-progress{height:4px;background:rgba(255,255,255,.08);border-radius:4px;margin-top:6px;overflow:hidden}
+.node-progress-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--accent3));transition:width .6s ease}
+.map-node.completed .node-progress-bar{background:var(--accent3)}
+.map-node.current .node-progress-bar{background:linear-gradient(90deg,var(--accent4),var(--accent))}
+.node-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:8px;flex-shrink:0;white-space:nowrap}
+.badge-done{background:rgba(78,205,196,.15);color:var(--accent3)}
+.badge-progress{background:rgba(255,217,61,.12);color:var(--accent4)}
+.badge-locked{background:rgba(255,255,255,.06);color:var(--text2)}
+
+/* ══ 学习页：合一卡片 ══ */
+.learn-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.learn-top h2{font-size:20px;font-weight:700}
+.counter{font-size:13px;color:var(--text2);font-weight:600}
+
+.word-card{max-width:440px;margin:0 auto 16px;border-radius:var(--radius);overflow:hidden;background:var(--bg2);border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 40px rgba(0,0,0,.3)}
+
+/* 卡片头部：单词+发音 */
+.card-head{padding:28px 24px 16px;text-align:center;position:relative}
+.card-head .word{font-size:40px;font-weight:900;letter-spacing:2px}
+.card-head .phonetic{font-size:15px;color:var(--accent3);margin-top:4px}
+.card-head .speak-btn{background:rgba(124,92,252,.2);border:1px solid rgba(124,92,252,.3);color:var(--accent);width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:all .25s;margin-top:10px}
+.card-head .speak-btn:hover{background:var(--accent);color:#fff;transform:scale(1.1)}
+.card-head .speak-btn.speaking{animation:pulse 1s infinite}
+
+/* 卡片主体：释义+作用+示例 */
+.card-body{padding:0 24px 24px}
+.card-section{margin-bottom:14px;animation:slideUp .3s ease}
+.card-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:4px}
+.card-section .chinese{font-size:22px;font-weight:700;color:var(--accent3)}
+.card-section .role{font-size:14px;color:var(--text);line-height:1.5;padding:10px 14px;background:rgba(124,92,252,.08);border-radius:10px;border-left:3px solid var(--accent)}
+.card-section .example{font-family:'Cascadia Code','Fira Code',monospace;font-size:12px;background:rgba(0,0,0,.3);padding:12px 14px;border-radius:10px;color:#c8d6e5;line-height:1.6;white-space:pre-wrap;border:1px solid rgba(78,205,196,.12)}
+
+/* ── 拼写区域 ── */
+.spell-section{padding:0 24px 20px;border-top:1px solid rgba(255,255,255,.06);padding-top:16px}
+.spell-section .label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px}
+.spell-row{display:flex;gap:10px;align-items:center}
+.spell-input{flex:1;background:var(--bg3);border:2px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 16px;font-size:20px;text-align:center;color:var(--text);outline:none;transition:all .3s;font-family:'Cascadia Code','Fira Code',monospace;letter-spacing:3px}
+.spell-input:focus{border-color:var(--accent);box-shadow:0 0 20px rgba(124,92,252,.2)}
+.spell-input.correct{border-color:var(--accent3);background:rgba(78,205,196,.1);color:var(--accent3)}
+.spell-input.wrong{border-color:var(--accent2);background:rgba(255,107,107,.1);color:var(--accent2);animation:shake .4s ease}
+.spell-check-btn{width:44px;height:44px;border-radius:12px;background:var(--accent);color:#fff;border:none;font-size:18px;cursor:pointer;transition:all .25s;flex-shrink:0}
+.spell-check-btn:hover{background:#6a4ce0;transform:scale(1.05)}
+.spell-result{font-size:12px;margin-top:6px;height:16px}
+.spell-result.ok{color:var(--accent3)}
+.spell-result.fail{color:var(--accent2)}
+
+/* ── 听写区域 ── */
+.listen-section{padding:0 24px 24px;border-top:1px solid rgba(255,255,255,.06);padding-top:16px}
+.listen-section .label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px}
+.listen-row{display:flex;gap:10px;align-items:center}
+.listen-input{flex:1;background:var(--bg3);border:2px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 16px;font-size:20px;text-align:center;color:var(--text);outline:none;transition:all .3s;font-family:'Cascadia Code','Fira Code',monospace;letter-spacing:3px}
+.listen-input:focus{border-color:var(--accent);box-shadow:0 0 20px rgba(124,92,252,.2)}
+.listen-input.correct{border-color:var(--accent3);background:rgba(78,205,196,.1);color:var(--accent3)}
+.listen-input.wrong{border-color:var(--accent2);background:rgba(255,107,107,.1);color:var(--accent2);animation:shake .4s ease}
+.listen-play-btn{width:44px;height:44px;border-radius:50%;background:rgba(78,205,196,.15);border:1px solid rgba(78,205,196,.3);color:var(--accent3);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;flex-shrink:0}
+.listen-play-btn:hover{background:var(--accent3);color:#fff;transform:scale(1.1)}
+.listen-play-btn.speaking{animation:pulse 1s infinite}
+.listen-check-btn{width:44px;height:44px;border-radius:12px;background:var(--accent3);color:#fff;border:none;font-size:18px;cursor:pointer;transition:all .25s;flex-shrink:0}
+.listen-check-btn:hover{transform:scale(1.05)}
+.listen-result{font-size:12px;margin-top:6px;height:16px}
+.listen-result.ok{color:var(--accent3)}
+.listen-result.fail{color:var(--accent2)}
+
+/* ── 底部操作 ── */
+.learn-actions{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:8px}
+.learn-actions .btn{min-width:130px;justify-content:center}
+
+/* combo & 粒子 */
+.combo-display{position:fixed;top:76px;right:16px;z-index:200;font-size:28px;font-weight:900;color:var(--accent4);opacity:0;transition:all .3s;pointer-events:none}
+.combo-display.active{opacity:1}
+.combo-display.pop{animation:comboPop .3s ease}
+#particles{position:fixed;inset:0;pointer-events:none;z-index:150}
+.particle{position:absolute;border-radius:50%;animation:particle .8s ease forwards}
+
+/* ── 复习页 ── */
+.review-empty{text-align:center;padding:60px 20px;color:var(--text2)}
+.review-empty .icon{font-size:64px;margin-bottom:16px}
+.review-list{display:grid;gap:10px;margin-top:16px}
+.review-item{display:flex;align-items:center;gap:14px;padding:14px 18px}
+.review-item .word{font-weight:700;font-size:15px;flex:1}
+.review-item .err-count{font-size:11px;color:var(--accent2);background:rgba(255,107,107,.12);padding:3px 10px;border-radius:8px}
+.review-item .btn{flex-shrink:0}
+
+/* ── 个人中心 ── */
+.profile-header{text-align:center;padding:28px 0 16px}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 10px;animation:float 3s ease-in-out infinite}
+.profile-name{font-size:20px;font-weight:700}
+.profile-level{font-size:13px;color:var(--accent4);margin-top:4px}
+.badge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:16px}
+.badge-card{padding:12px;text-align:center;border-radius:12px;background:var(--bg3);border:1px solid rgba(255,255,255,.06);transition:all .3s}
+.badge-card.earned{border-color:var(--accent4);background:rgba(255,217,61,.06)}
+.badge-card .icon{font-size:26px;margin-bottom:4px}
+.badge-card .name{font-size:12px;font-weight:600}
+.badge-card .desc{font-size:10px;color:var(--text2);margin-top:2px}
+.daily-task{margin-top:20px}
+.daily-task h3{font-size:15px;font-weight:700;margin-bottom:10px}
+.task-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:var(--bg3);margin-bottom:6px}
+.task-item .check{width:20px;height:20px;border-radius:50%;border:2px solid var(--text2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;transition:all .3s}
+.task-item.done .check{background:var(--accent3);border-color:var(--accent3);color:#fff}
+.task-item .info{flex:1}
+.task-item .info .tname{font-size:13px;font-weight:600}
+.task-item .info .tdesc{font-size:11px;color:var(--text2)}
+.task-item .treward{font-size:12px;font-weight:700;color:var(--accent4)}
+
+@media(max-width:600px){
+  .hero h1{font-size:24px}
+  .card-head .word{font-size:32px}
+  .stats-row{gap:6px}
+  .stat-card{padding:10px 14px;min-width:76px}
+  .stat-card .val{font-size:20px}
+  .container{padding:14px 10px 100px}
+  .spell-row,.listen-row{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">PyVocab</div>
+  <div class="topbar-score">⭐ <span id="topScore">0</span></div>
+</div>
+<div class="combo-display" id="comboDisplay"></div>
+<div id="particles"></div>
+
+<!-- ====== 首页 ====== -->
+<div class="page active" id="pageHome">
+  <div class="container">
+    <div class="hero"><h1>🐍 Python 英语词卡</h1><p>从最简单的开始，一步步掌握编程英语</p></div>
+    <div class="stats-row" id="statsRow"></div>
+    <div style="text-align:center;margin:16px 0">
+      <button class="btn btn-primary" onclick="selectDictCategory()" style="min-width:200px">🎧 开始听写测试</button>
+    </div>
+    <div class="map-container" id="mapContainer"></div>
+  </div>
+</div>
+
+<!-- ====== 学习页（学习+拼写） ====== -->
+<div class="page" id="pageLearn">
+  <div class="container">
+    <div class="learn-top">
+      <h2 id="learnTitle">学习</h2>
+      <span class="counter" id="learnCounter">0/0</span>
+    </div>
+    <div style="text-align:center;margin-bottom:12px">
+      <span style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(124,92,252,.15);color:var(--accent);border:1px solid rgba(124,92,252,.3)">📖 学习阶段</span>
+    </div>
+
+    <!-- 学习卡片 -->
+    <div class="word-card" id="wordCard">
+      <div class="card-head">
+        <div class="word" id="cardWord"></div>
+        <div class="phonetic" id="cardPhonetic"></div>
+        <button class="speak-btn" id="speakBtn" onclick="speakWord()" title="发音">🔊</button>
+      </div>
+      <div class="card-body">
+        <div class="card-section">
+          <div class="card-section-label">中文释义</div>
+          <div class="chinese" id="cardChinese"></div>
+        </div>
+        <div class="card-section">
+          <div class="card-section-label">Python 中的作用</div>
+          <div class="role" id="cardRole"></div>
+        </div>
+        <div class="card-section">
+          <div class="card-section-label">代码示例</div>
+          <div class="example" id="cardExample"></div>
+        </div>
+      </div>
+      <!-- 拼写练习 -->
+      <div class="spell-section">
+        <div class="label">✏️ 拼写练习</div>
+        <div class="spell-row">
+          <input class="spell-input" id="spellInput" autocomplete="off" placeholder="输入单词…" onkeydown="if(event.key==='Enter')checkSpell()">
+          <button class="spell-check-btn" onclick="checkSpell()" title="确认">✓</button>
+        </div>
+        <div class="spell-result" id="spellResult"></div>
+        <button class="btn btn-sm btn-secondary" id="spellRetryBtn" onclick="retrySpell()" style="display:none;margin-top:8px;width:100%">🔁 再练一次</button>
+      </div>
+    </div>
+
+    <div class="learn-actions">
+      <button class="btn btn-danger btn-sm" onclick="markWord(false)">不认识</button>
+      <button class="btn btn-primary btn-sm" onclick="markWord(true)">下一个 ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 听写测试页 ====== -->
+<div class="page" id="pageDictation">
+  <div class="container">
+    <div class="learn-top">
+      <h2 id="dictTitle">听写测试</h2>
+      <span class="counter" id="dictCounter">0/0</span>
+    </div>
+    <div style="text-align:center;margin-bottom:12px">
+      <span style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(78,205,196,.15);color:var(--accent3);border:1px solid rgba(78,205,196,.3)">👂 听写阶段</span>
+    </div>
+
+    <div class="word-card" id="dictCard">
+      <!-- 提示区：只显示 Python 作用 -->
+      <div class="card-head" style="padding:28px 24px 12px">
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px">👂 听发音，根据 Python 作用写出单词</div>
+        <div class="role" id="dictHint" style="text-align:left;margin-top:12px"></div>
+      </div>
+      <div style="padding:4px 24px 16px;display:flex;align-items:center;gap:12px">
+        <button class="listen-play-btn" id="dictPlayBtn" onclick="playDict()" title="播放发音" style="width:52px;height:52px;font-size:24px">🔊</button>
+        <div style="font-size:12px;color:var(--text2);line-height:1.5">点击播放听发音<br>可重复播放</div>
+      </div>
+      <!-- 听写输入 -->
+      <div class="listen-section" style="border-top:1px solid rgba(255,255,255,.06);padding-top:16px">
+        <div class="label">写出你听到的单词</div>
+        <div class="listen-row">
+          <input class="listen-input" id="dictInput" autocomplete="off" placeholder="听音拼写…" onkeydown="if(event.key==='Enter')checkDict()">
+          <button class="listen-check-btn" onclick="checkDict()" title="确认">✓</button>
+        </div>
+        <div class="listen-result" id="dictResult"></div>
+        <button class="btn btn-sm btn-secondary" onclick="skipDict()" style="margin-top:10px;width:100%">⏭️ 跳过这题</button>
+      </div>
+      <!-- 答对或跳过后展示详情 -->
+      <div id="dictReveal" style="display:none;padding:0 24px 24px">
+        <div class="card-section" style="margin-bottom:0">
+          <div class="card-section-label">单词详情</div>
+          <div style="font-size:28px;font-weight:900;letter-spacing:1px;margin:6px 0" id="dictRevealWord"></div>
+          <div style="font-size:13px;color:var(--accent3)" id="dictRevealPhonetic"></div>
+          <div style="font-size:16px;color:var(--accent3);margin-top:6px" id="dictRevealChinese"></div>
+          <div style="font-size:13px;color:var(--text2);margin-top:8px;padding:10px 14px;background:rgba(124,92,252,.08);border-radius:10px;border-left:3px solid var(--accent)" id="dictRevealRole"></div>
+          <div class="example" style="margin-top:8px" id="dictRevealExample"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="learn-actions" id="dictActions" style="display:none">
+      <button class="btn btn-primary btn-sm" onclick="nextDict()">下一题 →</button>
+    </div>
+
+    <!-- 听写结果汇总 -->
+    <div id="dictSummary" style="display:none">
+      <div style="text-align:center;padding:30px 0 20px">
+        <div style="font-size:48px;margin-bottom:10px" id="dictSummaryEmoji">🎉</div>
+        <div style="font-size:20px;font-weight:700" id="dictSummaryTitle">听写完成！</div>
+        <div style="font-size:14px;color:var(--text2);margin-top:6px" id="dictSummaryDesc"></div>
+      </div>
+      <div id="dictSummaryList" style="display:grid;gap:8px;margin-top:16px"></div>
+      <div style="text-align:center;margin-top:24px;display:flex;gap:12px;justify-content:center">
+        <button class="btn btn-secondary btn-sm" onclick="switchPage('pageHome')">返回地图</button>
+        <button class="btn btn-primary btn-sm" onclick="retryDictation()">再来一次</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 复习页 ====== -->
+<div class="page" id="pageReview">
+  <div class="container">
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:16px">📖 错题本</h2>
+    <div id="reviewContent"></div>
+  </div>
+</div>
+
+<!-- ====== 个人中心 ====== -->
+<div class="page" id="pageProfile">
+  <div class="container">
+    <div class="profile-header">
+      <div class="profile-avatar">🐍</div>
+      <div class="profile-name">学习者</div>
+      <div class="profile-level" id="profileLevel">Lv.1</div>
+    </div>
+    <div class="stats-row" id="profileStats"></div>
+    <div class="daily-task" id="dailyTasks"></div>
+    <h3 style="font-size:15px;font-weight:700;margin:20px 0 10px">🏅 成就徽章</h3>
+    <div class="badge-grid" id="badgeGrid"></div>
+  </div>
+</div>
+
+<div class="navbar">
+  <div class="nav-item active" onclick="switchPage('pageHome',this)"><span class="icon">🗺️</span>地图</div>
+  <div class="nav-item" onclick="switchPage('pageLearn',this)"><span class="icon">📚</span>学习</div>
+  <div class="nav-item" onclick="switchPage('pageReview',this)"><span class="icon">📖</span>复习</div>
+  <div class="nav-item" onclick="switchPage('pageProfile',this)"><span class="icon">👤</span>我的</div>
+</div>
+
+<script>
+const VOCAB=[
+  {id:"level-1",name:"Hello Python",icon:"🟢",unlockScore:0,desc:"第一天写代码就会遇到的词",words:[
+    {word:"print",phonetic:"/prɪnt/",chinese:"打印；输出",pythonRole:"内置函数，将内容输出到控制台",pythonExample:"print('Hello, World!')"},
+    {word:"run",phonetic:"/rʌn/",chinese:"运行",pythonRole:"执行 Python 脚本",pythonExample:"python script.py"},
+    {word:"string",phonetic:"/strɪŋ/",chinese:"字符串",pythonRole:"文本数据类型，用引号包裹",pythonExample:"name = 'Alice'"},
+    {word:"integer",phonetic:"/ˈɪntɪdʒər/",chinese:"整数",pythonRole:"没有小数点的数字",pythonExample:"count = 42"},
+    {word:"float",phonetic:"/fləʊt/",chinese:"浮点数",pythonRole:"带小数点的数字",pythonExample:"price = 3.14"},
+    {word:"variable",phonetic:"/ˈveriəbl/",chinese:"变量",pythonRole:"存储数据的命名容器",pythonExample:"age = 25"},
+    {word:"assign",phonetic:"/əˈsaɪn/",chinese:"赋值",pythonRole:"把值绑定到变量",pythonExample:"x = 10"},
+    {word:"input",phonetic:"/ˈɪnpʊt/",chinese:"输入",pythonRole:"从控制台读取用户输入",pythonExample:"name = input('你的名字: ')"},
+    {word:"comment",phonetic:"/ˈkɒment/",chinese:"注释",pythonRole:"代码中不被执行的说明文字",pythonExample:"# 这是一行注释"},
+    {word:"type",phonetic:"/taɪp/",chinese:"类型",pythonRole:"查看数据属于什么类型",pythonExample:"type(42)  # <class 'int'>"},
+    {word:"error",phonetic:"/ˈerər/",chinese:"错误",pythonRole:"程序运行时的报错",pythonExample:"# TypeError: unsupported operand"},
+    {word:"True",phonetic:"/truː/",chinese:"真",pythonRole:"布尔值，表示成立",pythonExample:"is_student = True"},
+    {word:"code",phonetic:"/kəʊd/",chinese:"代码",pythonRole:"程序员写的指令集合",pythonExample:"# 这是一段 Python code"},
+    {word:"output",phonetic:"/ˈaʊtpʊt/",chinese:"输出",pythonRole:"程序产生的结果",pythonExample:"print('output')"},
+    {word:"console",phonetic:"/ˈkɒnsəʊl/",chinese:"控制台",pythonRole:"显示程序输出的终端窗口",pythonExample:"# 在 console 中查看结果"},
+    {word:"syntax",phonetic:"/ˈsɪntæks/",chinese:"语法",pythonRole:"代码的书写规则",pythonExample:"# SyntaxError: 语法错误"},
+    {word:"execute",phonetic:"/ˈeksɪkjuːt/",chinese:"执行",pythonRole:"运行代码",pythonExample:"# 按 F5 执行程序"},
+    {word:"debug",phonetic:"/diːˈbʌɡ/",chinese:"调试",pythonRole:"查找并修复代码错误",pythonExample:"# 使用 debugger 调试代码"},
+    {word:"script",phonetic:"/skrɪpt/",chinese:"脚本",pythonRole:"可执行的程序文件",pythonExample:"python my_script.py"}
+  ]},
+  {id:"level-2",name:"判断与循环",icon:"🔄",unlockScore:60,desc:"让程序会思考、会重复",words:[
+    {word:"if",phonetic:"/ɪf/",chinese:"如果",pythonRole:"条件判断，满足则执行",pythonExample:"if age >= 18:\n    print('成年了')"},
+    {word:"else",phonetic:"/els/",chinese:"否则",pythonRole:"条件不满足时执行的分支",pythonExample:"if score >= 60:\n    print('及格')\nelse:\n    print('不及格')"},
+    {word:"elif",phonetic:"/ˈelɪf/",chinese:"否则如果",pythonRole:"多条件判断的中间分支",pythonExample:"if score >= 90:\n    print('优秀')\nelif score >= 60:\n    print('及格')"},
+    {word:"for",phonetic:"/fɔːr/",chinese:"循环",pythonRole:"遍历序列中每个元素",pythonExample:"for i in range(5):\n    print(i)"},
+    {word:"while",phonetic:"/waɪl/",chinese:"当…时循环",pythonRole:"条件为真时一直重复",pythonExample:"while count > 0:\n    count -= 1"},
+    {word:"range",phonetic:"/reɪndʒ/",chinese:"范围",pythonRole:"生成一串连续整数",pythonExample:"list(range(5))  # [0,1,2,3,4]"},
+    {word:"break",phonetic:"/breɪk/",chinese:"跳出",pythonRole:"立即退出当前循环",pythonExample:"for i in range(10):\n    if i == 5: break"},
+    {word:"continue",phonetic:"/kənˈtɪnjuː/",chinese:"继续",pythonRole:"跳过这一轮，进入下一轮",pythonExample:"for i in range(5):\n    if i == 2: continue"},
+    {word:"in",phonetic:"/ɪn/",chinese:"在…中",pythonRole:"判断元素是否属于序列",pythonExample:"3 in [1,2,3]  # True"},
+    {word:"boolean",phonetic:"/ˈbuːliən/",chinese:"布尔值",pythonRole:"只有 True 或 False",pythonExample:"is_valid = True"},
+    {word:"False",phonetic:"/fɔːls/",chinese:"假",pythonRole:"布尔值，表示不成立",pythonExample:"is_empty = False"},
+    {word:"None",phonetic:"/nʌn/",chinese:"空值",pythonRole:"Python 里的「什么都没有」",pythonExample:"result = None"},
+    {word:"condition",phonetic:"/kənˈdɪʃn/",chinese:"条件",pythonRole:"if/while 后面的判断表达式",pythonExample:"if condition:\n    pass"},
+    {word:"loop",phonetic:"/luːp/",chinese:"循环",pythonRole:"重复执行一段代码",pythonExample:"# for 和 while 都是 loop"},
+    {word:"iterate",phonetic:"/ˈɪtəreɪt/",chinese:"迭代",pythonRole:"逐个访问序列中的元素",pythonExample:"for item in items:\n    # 迭代每个 item"},
+    {word:"nested",phonetic:"/ˈnestɪd/",chinese:"嵌套",pythonRole:"一个结构内部包含同类结构",pythonExample:"# 嵌套循环\nfor i in range(3):\n    for j in range(3):"},
+    {word:"skip",phonetic:"/skɪp/",chinese:"跳过",pythonRole:"continue 的同义词",pythonExample:"# skip this iteration"},
+    {word:"exit",phonetic:"/ˈeksɪt/",chinese:"退出",pythonRole:"break 或结束程序",pythonExample:"# exit the loop"},
+    {word:"branch",phonetic:"/brɑːntʃ/",chinese:"分支",pythonRole:"条件判断的不同路径",pythonExample:"# if-else 创建两个 branch"}
+  ]},
+  {id:"level-3",name:"数据容器",icon:"📦",unlockScore:150,desc:"用列表、字典装更多数据",words:[
+    {word:"list",phonetic:"/lɪst/",chinese:"列表",pythonRole:"有序可变的元素集合",pythonExample:"fruits = ['apple','banana','cherry']"},
+    {word:"dictionary",phonetic:"/ˈdɪkʃəneri/",chinese:"字典",pythonRole:"键值对，用名字找数据",pythonExample:"student = {'name':'Bob','age':20}"},
+    {word:"tuple",phonetic:"/ˈtʌpl/",chinese:"元组",pythonRole:"有序但不可改的集合",pythonExample:"point = (3, 4)"},
+    {word:"set",phonetic:"/set/",chinese:"集合",pythonRole:"不重复的元素集合",pythonExample:"unique = {1, 2, 3, 3}  # {1,2,3}"},
+    {word:"len",phonetic:"/len/",chinese:"长度",pythonRole:"数一数有多少个元素",pythonExample:"len([1,2,3])  # 3"},
+    {word:"append",phonetic:"/əˈpend/",chinese:"追加",pythonRole:"在列表末尾加一个元素",pythonExample:"fruits = ['apple']\nfruits.append('banana')"},
+    {word:"sort",phonetic:"/sɔːrt/",chinese:"排序",pythonRole:"把列表从小到大排好",pythonExample:"nums = [3,1,2]\nnums.sort()  # [1,2,3]"},
+    {word:"split",phonetic:"/splɪt/",chinese:"分割",pythonRole:"把字符串拆成列表",pythonExample:"'a,b,c'.split(',')  # ['a','b','c']"},
+    {word:"join",phonetic:"/dʒɔɪn/",chinese:"连接",pythonRole:"把列表拼成字符串",pythonExample:"','.join(['a','b','c'])  # 'a,b,c'"},
+    {word:"key",phonetic:"/kiː/",chinese:"键",pythonRole:"字典中用来查找数据的名字",pythonExample:"student['name']  # 'Bob'"},
+    {word:"value",phonetic:"/ˈvæljuː/",chinese:"值",pythonRole:"字典中键对应的数据",pythonExample:"student['age']  # 20"},
+    {word:"index",phonetic:"/ˈɪndeks/",chinese:"索引",pythonRole:"元素在列表中的位置编号（从0开始）",pythonExample:"fruits[0]  # 'apple'"},
+    {word:"element",phonetic:"/ˈelɪmənt/",chinese:"元素",pythonRole:"容器中的一个数据项",pythonExample:"# 列表中的每个 element"},
+    {word:"slice",phonetic:"/slaɪs/",chinese:"切片",pythonRole:"截取序列的一部分",pythonExample:"nums[1:4]  # 切片取第2到4个"},
+    {word:"insert",phonetic:"/ɪnˈsɜːrt/",chinese:"插入",pythonRole:"在指定位置添加元素",pythonExample:"nums.insert(0, 100)  # 在开头插入"},
+    {word:"remove",phonetic:"/rɪˈmuːv/",chinese:"移除",pythonRole:"删除指定值的元素",pythonExample:"nums.remove(5)  # 删除值为5的元素"},
+    {word:"pop",phonetic:"/pɒp/",chinese:"弹出",pythonRole:"删除并返回最后一个元素",pythonExample:"last = nums.pop()"},
+    {word:"extend",phonetic:"/ɪkˈstend/",chinese:"扩展",pythonRole:"合并另一个列表",pythonExample:"list1.extend(list2)"},
+    {word:"copy",phonetic:"/ˈkɒpi/",chinese:"复制",pythonRole:"创建容器的副本",pythonExample:"new_list = old_list.copy()"}
+  ]},
+  {id:"level-4",name:"函数与复用",icon:"🧩",unlockScore:260,desc:"把重复代码包成函数",words:[
+    {word:"def",phonetic:"/def/",chinese:"定义",pythonRole:"定义一个函数",pythonExample:"def greet(name):\n    print(f'Hello, {name}!')"},
+    {word:"return",phonetic:"/rɪˈtɜːrn/",chinese:"返回",pythonRole:"函数执行完给回结果",pythonExample:"def add(a, b):\n    return a + b"},
+    {word:"argument",phonetic:"/ˈɑːrɡjʊmənt/",chinese:"实参",pythonRole:"调用函数时传进去的值",pythonExample:"greet('Alice')  # 'Alice'是实参"},
+    {word:"parameter",phonetic:"/pəˈræmɪtər/",chinese:"形参",pythonRole:"函数定义里的占位变量",pythonExample:"def add(a, b):  # a, b是形参"},
+    {word:"default",phonetic:"/dɪˈfɔːlt/",chinese:"默认值",pythonRole:"不传参时自动用的值",pythonExample:"def greet(name='World'):\n    print(f'Hello, {name}!')"},
+    {word:"import",phonetic:"/ˈɪmpɔːrt/",chinese:"导入",pythonRole:"引入别人写好的模块",pythonExample:"import math"},
+    {word:"module",phonetic:"/ˈmɒdjuːl/",chinese:"模块",pythonRole:"一个 .py 文件就是一个模块",pythonExample:"import random"},
+    {word:"package",phonetic:"/ˈpækɪdʒ/",chinese:"包",pythonRole:"装了多个模块的文件夹",pythonExample:"import numpy"},
+    {word:"strip",phonetic:"/strɪp/",chinese:"去除空白",pythonRole:"去掉字符串首尾空格",pythonExample:"'  hello  '.strip()  # 'hello'"},
+    {word:"replace",phonetic:"/rɪˈpleɪs/",chinese:"替换",pythonRole:"替换字符串中的内容",pythonExample:"'hello'.replace('l','r')  # 'herro'"},
+    {word:"reverse",phonetic:"/rɪˈvɜːrs/",chinese:"反转",pythonRole:"把列表倒过来",pythonExample:"nums = [1,2,3]\nnums.reverse()  # [3,2,1]"},
+    {word:"pass",phonetic:"/pɑːs/",chinese:"占位",pythonRole:"什么都不做，先占个位",pythonExample:"def todo():\n    pass  # 以后再写"},
+    {word:"function",phonetic:"/ˈfʌŋkʃn/",chinese:"函数",pythonRole:"可重复使用的代码块",pythonExample:"# def 定义一个 function"},
+    {word:"call",phonetic:"/kɔːl/",chinese:"调用",pythonRole:"执行一个函数",pythonExample:"greet('Bob')  # 调用 greet 函数"},
+    {word:"invoke",phonetic:"/ɪnˈvəʊk/",chinese:"调用",pythonRole:"call 的同义词",pythonExample:"# invoke the function"},
+    {word:"local",phonetic:"/ˈləʊkl/",chinese:"局部的",pythonRole:"只在函数内部有效",pythonExample:"# local variable 局部变量"},
+    {word:"recursive",phonetic:"/rɪˈkɜːrsɪv/",chinese:"递归",pythonRole:"函数调用自己",pythonExample:"def factorial(n):\n    if n<=1: return 1\n    return n * factorial(n-1)"},
+    {word:"callback",phonetic:"/ˈkɔːlbæk/",chinese:"回调",pythonRole:"作为参数传入的函数",pythonExample:"# 事件处理常用 callback"},
+    {word:"library",phonetic:"/ˈlaɪbrəri/",chinese:"库",pythonRole:"别人写好的代码集合",pythonExample:"import numpy  # 导入库"}
+  ]},
+  {id:"level-5",name:"运算与逻辑",icon:"⚙️",unlockScore:380,desc:"让程序做数学和逻辑判断",words:[
+    {word:"add",phonetic:"/æd/",chinese:"加",pythonRole:"加法运算符 +",pythonExample:"total = 3 + 5  # 8"},
+    {word:"subtract",phonetic:"/səbˈtrækt/",chinese:"减",pythonRole:"减法运算符 -",pythonExample:"diff = 10 - 4  # 6"},
+    {word:"multiply",phonetic:"/ˈmʌltɪplaɪ/",chinese:"乘",pythonRole:"乘法运算符 *",pythonExample:"area = 6 * 7  # 42"},
+    {word:"divide",phonetic:"/dɪˈvaɪd/",chinese:"除",pythonRole:"除法运算符 /，结果有小数",pythonExample:"ratio = 10 / 3  # 3.333..."},
+    {word:"modulo",phonetic:"/ˈmɒdjʊləʊ/",chinese:"取余",pythonRole:"取余运算符 %",pythonExample:"10 % 3  # 1"},
+    {word:"power",phonetic:"/ˈpaʊər/",chinese:"幂运算",pythonRole:"乘方运算符 **",pythonExample:"2 ** 3  # 8"},
+    {word:"floor",phonetic:"/flɔːr/",chinese:"整除",pythonRole:"整除运算符 //，只留整数",pythonExample:"10 // 3  # 3"},
+    {word:"equal",phonetic:"/ˈiːkwəl/",chinese:"等于",pythonRole:"比较运算符 ==",pythonExample:"5 == 5  # True"},
+    {word:"and",phonetic:"/ænd/",chinese:"与",pythonRole:"两边都为 True 才是 True",pythonExample:"True and False  # False"},
+    {word:"or",phonetic:"/ɔːr/",chinese:"或",pythonRole:"任一边为 True 就是 True",pythonExample:"True or False  # True"},
+    {word:"not",phonetic:"/nɒt/",chinese:"非",pythonRole:"取反，True 变 False",pythonExample:"not True  # False"},
+    {word:"compare",phonetic:"/kəmˈpeər/",chinese:"比较",pythonRole:"比较两个值的大小",pythonExample:"5 > 3  # True"},
+    {word:"greater",phonetic:"/ˈɡreɪtər/",chinese:"大于",pythonRole:"> 运算符",pythonExample:"10 > 5  # True"},
+    {word:"less",phonetic:"/les/",chinese:"小于",pythonRole:"< 运算符",pythonExample:"3 < 7  # True"},
+    {word:"operator",phonetic:"/ˈɒpəreɪtər/",chinese:"运算符",pythonRole:"+ - * / 等符号",pythonExample:"# arithmetic operator 算术运算符"},
+    {word:"expression",phonetic:"/ɪkˈspreʃn/",chinese:"表达式",pythonRole:"能算出值的代码片段",pythonExample:"x + y * 2  # 这是一个 expression"},
+    {word:"evaluate",phonetic:"/ɪˈvæljueɪt/",chinese:"求值",pythonRole:"计算表达式的结果",pythonExample:"# Python 会 evaluate 表达式"},
+    {word:"result",phonetic:"/rɪˈzʌlt/",chinese:"结果",pythonRole:"计算或函数返回的值",pythonExample:"result = add(2, 3)"},
+    {word:"negative",phonetic:"/ˈneɡətɪv/",chinese:"负数",pythonRole:"小于零的数",pythonExample:"temp = -10  # negative number"}
+  ]},
+  {id:"level-6",name:"进阶高手",icon:"🏆",unlockScore:520,desc:"类、匿名函数、高阶函数",words:[
+    {word:"class",phonetic:"/klɑːs/",chinese:"类",pythonRole:"定义对象的蓝图",pythonExample:"class Dog:\n    def __init__(self, name):\n        self.name = name"},
+    {word:"self",phonetic:"/self/",chinese:"自身",pythonRole:"类方法里指向实例自己",pythonExample:"class Cat:\n    def speak(self):\n        print('Meow')"},
+    {word:"init",phonetic:"/ɪˈnɪt/",chinese:"初始化",pythonRole:"创建对象时自动调用的方法",pythonExample:"def __init__(self, name):\n    self.name = name"},
+    {word:"lambda",phonetic:"/ˈlæmdə/",chinese:"匿名函数",pythonRole:"一行搞定的简短函数",pythonExample:"square = lambda x: x ** 2"},
+    {word:"scope",phonetic:"/skəʊp/",chinese:"作用域",pythonRole:"变量能被访问的范围",pythonExample:"x = 10  # 全局\ndef foo():\n    x = 5  # 局部"},
+    {word:"global",phonetic:"/ˈɡləʊbl/",chinese:"全局的",pythonRole:"声明变量是全局的",pythonExample:"count = 0\ndef inc():\n    global count\n    count += 1"},
+    {word:"enumerate",phonetic:"/ɪˈnjuːməreɪt/",chinese:"枚举",pythonRole:"同时拿到索引和值",pythonExample:"for i, v in enumerate(['a','b']):\n    print(i, v)"},
+    {word:"zip",phonetic:"/zɪp/",chinese:"压缩配对",pythonRole:"把多个序列按位置配对",pythonExample:"list(zip([1,2],['a','b']))\n# [(1,'a'),(2,'b')]"},
+    {word:"map",phonetic:"/mæp/",chinese:"映射",pythonRole:"对每个元素执行同一个函数",pythonExample:"list(map(str, [1,2,3]))\n# ['1','2','3']"},
+    {word:"filter",phonetic:"/ˈfɪltər/",chinese:"过滤",pythonRole:"只留下满足条件的元素",pythonExample:"list(filter(lambda x:x>2, [1,2,3,4]))\n# [3,4]"},
+    {word:"yield",phonetic:"/jiːld/",chinese:"产出",pythonRole:"生成器，一次吐一个值",pythonExample:"def count_up():\n    yield 1\n    yield 2"},
+    {word:"async",phonetic:"eɪˈsɪŋk",chinese:"异步",pythonRole:"声明异步函数，不阻塞等待",pythonExample:"async def fetch_data():\n    await sleep(1)"},
+    {word:"object",phonetic:"/ˈɒbdʒɪkt/",chinese:"对象",pythonRole:"类的实例，包含数据和方法",pythonExample:"dog = Dog('Buddy')  # 创建对象"},
+    {word:"method",phonetic:"/ˈmeθəd/",chinese:"方法",pythonRole:"类中定义的函数",pythonExample:"dog.bark()  # 调用 method"},
+    {word:"attribute",phonetic:"/ˈætrɪbjuːt/",chinese:"属性",pythonRole:"对象的数据成员",pythonExample:"dog.name  # 访问 attribute"},
+    {word:"inherit",phonetic:"/ɪnˈherɪt/",chinese:"继承",pythonRole:"子类获得父类的特性",pythonExample:"class Cat(Animal):  # Cat 继承 Animal"},
+    {word:"override",phonetic:"/ˌəʊvəˈraɪd/",chinese:"重写",pythonRole:"子类重新定义父类方法",pythonExample:"# override parent method"},
+    {word:"instance",phonetic:"/ˈɪnstəns/",chinese:"实例",pythonRole:"类的具体对象",pythonExample:"isinstance(dog, Dog)  # True"},
+    {word:"decorator",phonetic:"/ˈdekəreɪtər/",chinese:"装饰器",pythonRole:"修改函数行为的语法糖",pythonExample:"@property\ndef name(self):"}
+  ]}
+];
+
+let currentCategory=null,currentWords=[],currentIdx=0,combo=0;
+// 听写状态
+let dictWords=[],dictIdx=0,dictResults=[],dictAnswered=false;
+
+function loadProgress(){try{return JSON.parse(localStorage.getItem('pyvocab4'))||{}}catch{return{}}}
+function saveProgress(p){localStorage.setItem('pyvocab4',JSON.stringify(p))}
+function getScore(){return loadProgress().score||0}
+function addScore(n){const p=loadProgress();p.score=(p.score||0)+n;saveProgress(p);document.getElementById('topScore').textContent=p.score}
+function getMastered(id){const p=loadProgress();return p.mastered&&p.mastered[id]?p.mastered[id]:[]}
+function addMastered(id,word){const p=loadProgress();if(!p.mastered)p.mastered={};if(!p.mastered[id])p.mastered[id]=[];if(!p.mastered[id].includes(word)){p.mastered[id].push(word);saveProgress(p)}}
+function getErrors(){return loadProgress().errors||{}}
+// type: 'wrong' | 'skipped'
+function addError(word,type='wrong'){
+  const p=loadProgress();
+  if(!p.errors)p.errors={};
+  if(!p.errors[word])p.errors[word]={wrong:0,skipped:0};
+  p.errors[word][type]=(p.errors[word][type]||0)+1;
+  saveProgress(p);
+}
+function removeError(word){const p=loadProgress();if(p.errors)delete p.errors[word];saveProgress(p)}
+function getStreak(){const p=loadProgress();const today=new Date().toDateString();if(p.lastDay===today)return p.streak||0;const yd=new Date(Date.now()-86400000).toDateString();p.streak=(p.lastDay===yd)?(p.streak||0)+1:1;p.lastDay=today;saveProgress(p);return p.streak}
+function getDailies(){const p=loadProgress();const today=new Date().toDateString();if(p.dailyDay!==today){p.dailyDay=today;p.dailies={learn5:false,review3:false,perfect:false};saveProgress(p)}return p.dailies}
+function setDaily(k,v){const p=loadProgress();if(!p.dailies)p.dailies={};p.dailies[k]=v;saveProgress(p)}
+
+function spawnParticles(x,y,count=12){const c=document.getElementById('particles'),colors=['#7c5cfc','#4ecdc4','#ffd93d','#ff6b6b','#a29bfe'];for(let i=0;i<count;i++){const p=document.createElement('div');p.className='particle';const sz=4+Math.random()*8,a=Math.random()*Math.PI*2,d=40+Math.random()*80;p.style.cssText=`left:${x}px;top:${y}px;width:${sz}px;height:${sz}px;background:${colors[i%colors.length]};--px:${Math.cos(a)*d}px;--py:${Math.sin(a)*d}px`;c.appendChild(p);setTimeout(()=>p.remove(),900)}}
+function showCombo(){const el=document.getElementById('comboDisplay');if(combo<2){el.classList.remove('active');return}el.textContent=`🔥 x${combo}`;el.classList.add('active');el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop')}
+
+/* ── 语音引擎：兼容处理 ── */
+let voicesReady=false;
+if('speechSynthesis' in window){
+  if(speechSynthesis.getVoices().length>0)voicesReady=true;
+  speechSynthesis.onvoiceschanged=()=>{voicesReady=true};
+}
+function speak(text,rate=1){
+  if(!('speechSynthesis' in window))return null;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-US';u.rate=rate;u.volume=1;
+  // 尝试选英文语音
+  if(voicesReady){
+    const voices=speechSynthesis.getVoices();
+    const en=voices.find(v=>v.lang.startsWith('en'))||voices[0];
+    if(en)u.voice=en;
+  }
+  // 某些浏览器需要延迟才能播
+  setTimeout(()=>speechSynthesis.speak(u),50);
+  return u;
+}
+function _clearSpeaking(btn){btn.classList.remove('speaking')}
+function speakWord(){
+  const w=currentWords[currentIdx];if(!w)return;
+  const btn=document.getElementById('speakBtn');btn.classList.add('speaking');
+  const u=speak(w.word);
+  if(u){u.onend=()=>_clearSpeaking(btn);u.onerror=()=>_clearSpeaking(btn)}
+  else setTimeout(()=>_clearSpeaking(btn),800);
+}
+function playListen(){
+  const w=currentWords[currentIdx];if(!w)return;
+  const btn=document.getElementById('listenPlayBtn');btn.classList.add('speaking');
+  const u=speak(w.word,0.85);
+  if(u){u.onend=()=>_clearSpeaking(btn);u.onerror=()=>_clearSpeaking(btn)}
+  else setTimeout(()=>_clearSpeaking(btn),800);
+}
+
+function switchPage(pageId,navEl){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(navEl)navEl.classList.add('active');
+  else{const idx={pageHome:1,pageLearn:2,pageReview:3,pageProfile:4}[pageId]||1;document.querySelector(`.nav-item:nth-child(${idx})`)?.classList.add('active')}
+  if(pageId==='pageHome')renderHome();
+  if(pageId==='pageProfile')renderProfile();
+  if(pageId==='pageReview')renderReview();
+}
+
+/* ── 首页 ── */
+function renderHome(){
+  const score=getScore();document.getElementById('topScore').textContent=score;
+  const totalWords=VOCAB.reduce((s,c)=>s+c.words.length,0);
+  let totalMastered=0;VOCAB.forEach(c=>totalMastered+=getMastered(c.id).length);
+    const errs=getErrors();
+  const totalErrors=Object.values(errs).reduce((a,b)=>a+(b.wrong||0)+(b.skipped||0),0);
+  document.getElementById('statsRow').innerHTML=`
+    <div class="stat-card glass"><div class="val" style="color:var(--accent3)">${totalMastered}</div><div class="label">已掌握</div></div>
+    <div class="stat-card glass"><div class="val" style="color:var(--accent4)">${score}</div><div class="label">积分</div></div>
+    <div class="stat-card glass"><div class="val" style="color:var(--accent2)">${totalErrors}</div><div class="label">错题</div></div>
+    <div class="stat-card glass"><div class="val" style="color:var(--accent)">${getStreak()}</div><div class="label">连续天数</div></div>`;
+  let currentCatId=null;
+  for(let i=0;i<VOCAB.length;i++){const cat=VOCAB[i];if(score<cat.unlockScore)break;const m=getMastered(cat.id).length;if(m<cat.words.length){currentCatId=cat.id;break}if(i===VOCAB.length-1)currentCatId=cat.id}
+  const map=document.getElementById('mapContainer');map.innerHTML='';
+  const svgNS='http://www.w3.org/2000/svg',svg=document.createElementNS(svgNS,'svg');svg.setAttribute('class','map-svg');map.appendChild(svg);
+  const nodes=[];
+  VOCAB.forEach((cat,idx)=>{
+    const mastered=getMastered(cat.id).length,total=cat.words.length,pct=Math.round(mastered/total*100);
+    const locked=score<cat.unlockScore,isCurrent=cat.id===currentCatId,isCompleted=mastered===total&&!locked;
+    const node=document.createElement('div');
+    node.className=`map-node ${locked?'locked':isCurrent?'current':isCompleted?'completed':''}`.trim();
+    node.innerHTML=`
+      <div class="node-num">${locked?'🔒':isCompleted?'✓':idx+1}</div>
+      <div class="node-icon">${cat.icon}</div>
+      <div class="node-info">
+        <h3>${cat.name}</h3><p class="desc">${cat.desc}</p>
+        <p>${locked?`需 ${cat.unlockScore} 积分解锁`:`${total} 词 · 已掌握 ${mastered}`}</p>
+        ${!locked?`<div class="node-progress"><div class="node-progress-bar" style="width:${pct}%"></div></div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+        <div class="node-badge ${isCompleted?'badge-done':isCurrent?'badge-progress':'badge-locked'}">${isCompleted?'完成':isCurrent?`${pct}%`:locked?'锁定':'0%'}</div>
+        ${!locked?`<button class="btn btn-sm ${isCompleted?'btn-secondary':'btn-primary'}" onclick="event.stopPropagation();startDictationFromHome('${cat.id}')" style="min-width:70px;font-size:11px">${isCompleted?'🔄 复习':'🎧 去听写'}</button>`:''}
+      </div>`;
+    if(!locked)node.onclick=()=>startCategory(cat);
+    map.appendChild(node);nodes.push(node);
+  });
+  requestAnimationFrame(()=>{
+    svg.innerHTML='';const mR=map.getBoundingClientRect();
+    svg.setAttribute('viewBox',`0 0 ${mR.width} ${mR.height}`);svg.style.width=mR.width+'px';svg.style.height=mR.height+'px';
+    for(let i=0;i<nodes.length-1;i++){
+      const aR=nodes[i].getBoundingClientRect(),bR=nodes[i+1].getBoundingClientRect();
+      const x1=aR.left+aR.width/2-mR.left,y1=aR.bottom-mR.top,x2=bR.left+bR.width/2-mR.left,y2=bR.top-mR.top;
+      const path=document.createElementNS(svgNS,'path');
+      path.setAttribute('d',`M${x1},${y1} C${x1},${y1+30} ${x2},${y2-30} ${x2},${y2}`);
+      path.setAttribute('fill','none');path.setAttribute('stroke-width','2');path.setAttribute('stroke-dasharray','6,6');
+      const aOk=getMastered(VOCAB[i].id).length===VOCAB[i].words.length&&score>=VOCAB[i].unlockScore;
+      path.setAttribute('stroke',aOk&&score>=VOCAB[i+1].unlockScore?'rgba(78,205,196,.4)':'rgba(255,255,255,.1)');
+      svg.appendChild(path);
+    }
+  });
+}
+
+function startCategory(cat){
+  currentCategory=cat;currentWords=[...cat.words];
+  const mastered=getMastered(cat.id);
+  const unmastered=currentWords.filter(w=>!mastered.includes(w.word));
+  if(unmastered.length>0)currentWords=unmastered;
+  for(let i=currentWords.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[currentWords[i],currentWords[j]]=[currentWords[j],currentWords[i]]}
+  currentIdx=0;combo=0;
+  document.getElementById('learnTitle').textContent=cat.name;
+  switchPage('pageLearn');showCard();
+}
+
+/* ── 学习页：合一卡片 ── */
+function showCard(){
+  if(!currentCategory)return;
+  if(!currentWords.length)currentWords=[...currentCategory.words];
+  if(currentIdx>=currentWords.length)currentIdx=0;
+  const w=currentWords[currentIdx];
+  document.getElementById('learnCounter').textContent=`${currentIdx+1}/${currentWords.length}`;
+  // 卡片信息
+  document.getElementById('cardWord').textContent=w.word;
+  document.getElementById('cardPhonetic').textContent=w.phonetic;
+  document.getElementById('cardChinese').textContent=w.chinese;
+  document.getElementById('cardRole').textContent=w.pythonRole;
+  document.getElementById('cardExample').textContent=w.pythonExample;
+  // 重置拼写
+  spellCorrect=false;
+  const si=document.getElementById('spellInput');si.value='';si.className='spell-input';
+  document.getElementById('spellResult').textContent='';document.getElementById('spellResult').className='spell-result';
+  const retryBtn=document.getElementById('spellRetryBtn');if(retryBtn)retryBtn.style.display='none';
+  // 重置听写
+  document.getElementById('listenInput').value='';document.getElementById('listenInput').className='listen-input';
+  document.getElementById('listenResult').textContent='';document.getElementById('listenResult').className='listen-result';
+}
+
+// 拼写练习：支持多次练习
+let spellCorrect=false;
+function checkSpell(){
+  const w=currentWords[currentIdx];const inp=document.getElementById('spellInput');const res=document.getElementById('spellResult');
+  if(inp.value.trim().toLowerCase()===w.word.toLowerCase()){
+    if(!spellCorrect){
+      inp.className='spell-input correct';res.textContent='✓ 正确！点击 🔁 再练一次';res.className='spell-result ok';
+      addScore(5);const rect=inp.getBoundingClientRect();spawnParticles(rect.left+rect.width/2,rect.top);
+      spellCorrect=true;
+      // 显示再练按钮
+      document.getElementById('spellRetryBtn').style.display='inline-flex';
+    }
+  }else{
+    inp.className='spell-input wrong';res.textContent=`✗ 正确拼写: ${w.word}`;res.className='spell-result fail';
+    addError(w.word,'wrong');setTimeout(()=>{inp.className='spell-input'},500);
+  }
+}
+
+function retrySpell(){
+  spellCorrect=false;
+  const inp=document.getElementById('spellInput');
+  inp.value='';inp.className='spell-input';
+  document.getElementById('spellResult').textContent='';
+  document.getElementById('spellRetryBtn').style.display='none';
+  inp.focus();
+}
+
+function checkListen(){
+  const w=currentWords[currentIdx];const inp=document.getElementById('listenInput');const res=document.getElementById('listenResult');
+  if(inp.value.trim().toLowerCase()===w.word.toLowerCase()){
+    inp.className='listen-input correct';res.textContent='✓ 听写正确！';res.className='listen-result ok';
+    addScore(5);const rect=inp.getBoundingClientRect();spawnParticles(rect.left+rect.width/2,rect.top);
+  }else{
+    inp.className='listen-input wrong';res.textContent=`✗ 正确答案: ${w.word}`;res.className='listen-result fail';
+    addError(w.word,'wrong');setTimeout(()=>{inp.className='listen-input'},500);
+  }
+}
+
+/* ── 听写测试功能 ── */
+let currentDictCategory=null,isHomeDict=false;
+
+// 从首页地图进入听写
+function startDictationFromHome(categoryId){
+  isHomeDict=true;
+  startDictation(categoryId);
+}
+
+function selectDictCategory(){
+  // 显示关卡选择
+  const score=getScore();
+  let html='<div style="text-align:center;padding:40px 20px"><h2 style="margin-bottom:20px">选择听写单元</h2><div style="display:grid;gap:12px;max-width:400px;margin:0 auto">';
+  VOCAB.forEach((cat,idx)=>{
+    const locked=score<cat.unlockScore;
+    const mastered=getMastered(cat.id).length;
+    html+=`<button class="btn ${locked?'btn-secondary':'btn-primary'}" style="justify-content:space-between;width:100%" ${locked?'disabled':`onclick="startDictation('${cat.id}')"`}>
+      <span>${cat.icon} ${cat.name}</span>
+      <span style="font-size:12px;opacity:0.8">${locked?'🔒 未解锁':mastered>=cat.words.length?'✓ 已完成':mastered+'/'+cat.words.length}</span>
+    </button>`;
+  });
+  html+='</div><button class="btn btn-secondary" style="margin-top:20px" onclick="switchPage(\'pageHome\')">返回</button></div>';
+  document.getElementById('pageDictation').innerHTML=html;
+  switchPage('pageDictation');
+}
+
+function startDictation(categoryId){
+  const cat=VOCAB.find(c=>c.id===categoryId);
+  if(!cat){selectDictCategory();return;}
+  currentDictCategory=cat;
+  // 使用该关卡所有单词
+  dictWords=[...cat.words];
+  // 打乱顺序
+  for(let i=dictWords.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [dictWords[i],dictWords[j]]=[dictWords[j],dictWords[i]];
+  }
+  dictIdx=0;dictResults=[];dictAnswered=false;
+  // 恢复听写页面结构
+  restoreDictationPage();
+  document.getElementById('dictSummary').style.display='none';
+  document.getElementById('dictCard').style.display='block';
+  document.getElementById('dictActions').style.display='none';
+  showDictWord();
+}
+
+function restoreDictationPage(){
+  document.getElementById('pageDictation').innerHTML=`
+  <div class="container">
+    <div class="learn-top">
+      <h2 id="dictTitle">听写测试</h2>
+      <span class="counter" id="dictCounter">0/0</span>
+    </div>
+    <div style="text-align:center;margin-bottom:12px">
+      <span style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(78,205,196,.15);color:var(--accent3);border:1px solid rgba(78,205,196,.3)">👂 听写阶段 · <span id="dictCatName"></span></span>
+    </div>
+
+    <div class="word-card" id="dictCard">
+      <div class="card-head" style="padding:28px 24px 12px">
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px">👂 听发音，根据 Python 作用写出单词</div>
+        <div class="role" id="dictHint" style="text-align:left;margin-top:12px"></div>
+      </div>
+      <div style="padding:4px 24px 16px;display:flex;align-items:center;gap:12px">
+        <button class="listen-play-btn" id="dictPlayBtn" onclick="playDict()" title="播放发音" style="width:52px;height:52px;font-size:24px">🔊</button>
+        <div style="font-size:12px;color:var(--text2);line-height:1.5">点击播放听发音<br>可重复播放</div>
+      </div>
+      <div class="listen-section" style="border-top:1px solid rgba(255,255,255,.06);padding-top:16px">
+        <div class="label">写出你听到的单词</div>
+        <div class="listen-row">
+          <input class="listen-input" id="dictInput" autocomplete="off" placeholder="听音拼写…" onkeydown="if(event.key==='Enter')checkDict()">
+          <button class="listen-check-btn" onclick="checkDict()" title="确认">✓</button>
+        </div>
+        <div class="listen-result" id="dictResult"></div>
+        <button class="btn btn-sm btn-secondary" onclick="skipDict()" style="margin-top:10px;width:100%">⏭️ 跳过这题</button>
+      </div>
+      <div id="dictReveal" style="display:none;padding:0 24px 24px">
+        <div class="card-section" style="margin-bottom:0">
+          <div class="card-section-label">单词详情</div>
+          <div style="font-size:28px;font-weight:900;letter-spacing:1px;margin:6px 0" id="dictRevealWord"></div>
+          <div style="font-size:13px;color:var(--accent3)" id="dictRevealPhonetic"></div>
+          <div style="font-size:16px;color:var(--accent3);margin-top:6px" id="dictRevealChinese"></div>
+          <div style="font-size:13px;color:var(--text2);margin-top:8px;padding:10px 14px;background:rgba(124,92,252,.08);border-radius:10px;border-left:3px solid var(--accent)" id="dictRevealRole"></div>
+          <div class="example" style="margin-top:8px" id="dictRevealExample"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="learn-actions" id="dictActions" style="display:none">
+      <button class="btn btn-primary btn-sm" onclick="nextDict()">下一题 →</button>
+    </div>
+
+    <div id="dictSummary" style="display:none">
+      <div style="text-align:center;padding:30px 0 20px">
+        <div style="font-size:48px;margin-bottom:10px" id="dictSummaryEmoji">🎉</div>
+        <div style="font-size:20px;font-weight:700" id="dictSummaryTitle">听写完成！</div>
+        <div style="font-size:14px;color:var(--text2);margin-top:6px" id="dictSummaryDesc"></div>
+      </div>
+      <div id="dictSummaryList" style="display:grid;gap:8px;margin-top:16px"></div>
+      <div style="text-align:center;margin-top:24px;display:flex;gap:12px;justify-content:center">
+        <button class="btn btn-secondary btn-sm" onclick="switchPage('pageHome')">返回地图 🗺️</button>
+        <button class="btn btn-primary btn-sm" onclick="retryDictation()">再来一次 🔄</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function showDictWord(){
+  if(dictIdx>=dictWords.length){showDictSummary();return;}
+  const w=dictWords[dictIdx];
+  dictAnswered=false;
+  document.getElementById('dictCounter').textContent=`${dictIdx+1}/${dictWords.length}`;
+  document.getElementById('dictTitle').textContent='听写测试';
+  const catNameEl=document.getElementById('dictCatName');
+  if(catNameEl&&currentDictCategory)catNameEl.textContent=currentDictCategory.name;
+  // 只显示 Python 作用，隐藏单词
+  document.getElementById('dictHint').textContent=w.pythonRole;
+  document.getElementById('dictInput').value='';
+  document.getElementById('dictInput').className='listen-input';
+  document.getElementById('dictInput').disabled=false;
+  document.getElementById('dictResult').textContent='';
+  document.getElementById('dictReveal').style.display='none';
+  document.getElementById('dictActions').style.display='none';
+  // 自动播放一次
+  setTimeout(()=>playDict(),300);
+}
+
+function playDict(){
+  if(dictIdx>=dictWords.length)return;
+  const w=dictWords[dictIdx];
+  const btn=document.getElementById('dictPlayBtn');btn.classList.add('speaking');
+  const u=speak(w.word,0.85);
+  if(u){u.onend=()=>btn.classList.remove('speaking');u.onerror=()=>btn.classList.remove('speaking');}
+  else setTimeout(()=>btn.classList.remove('speaking'),800);
+}
+
+function checkDict(){
+  if(dictAnswered||dictIdx>=dictWords.length)return;
+  const w=dictWords[dictIdx];
+  const inp=document.getElementById('dictInput');
+  const res=document.getElementById('dictResult');
+  const correct=inp.value.trim().toLowerCase()===w.word.toLowerCase();
+  dictAnswered=true;
+  inp.disabled=true;
+  if(correct){
+    inp.className='listen-input correct';
+    res.textContent='✓ 正确！';
+    res.className='listen-result ok';
+    addScore(10);
+    dictResults.push({word:w.word,correct:true});
+    spawnParticles(inp.getBoundingClientRect().left+inp.offsetWidth/2,inp.getBoundingClientRect().top);
+    revealDictWord();
+    // 答对后自动跳转下一题
+    setTimeout(()=>{
+      if(dictIdx<dictWords.length-1){
+        nextDict();
+      }else{
+        showDictSummary();
+      }
+    },1200);
+    }else{
+    inp.className='listen-input wrong';
+    res.textContent='✗ 错误';
+    res.className='listen-result fail';
+    addError(w.word,'wrong');
+    dictResults.push({word:w.word,correct:false});
+    revealDictWord();
+  }
+}
+
+function skipDict(){
+  if(dictAnswered||dictIdx>=dictWords.length)return;
+  const w=dictWords[dictIdx];
+  dictAnswered=true;
+  const inp=document.getElementById('dictInput');
+  inp.disabled=true;
+  inp.className='listen-input';
+  document.getElementById('dictResult').textContent='⏭️ 已跳过';
+  document.getElementById('dictResult').className='listen-result';
+    addError(w.word,'skipped');
+  dictResults.push({word:w.word,correct:false,skipped:true});
+  revealDictWord();
+}
+
+function revealDictWord(){
+  const w=dictWords[dictIdx];
+  document.getElementById('dictRevealWord').textContent=w.word;
+  document.getElementById('dictRevealPhonetic').textContent=w.phonetic;
+  document.getElementById('dictRevealChinese').textContent=w.chinese;
+  document.getElementById('dictRevealRole').textContent=w.pythonRole;
+  document.getElementById('dictRevealExample').textContent=w.pythonExample;
+  document.getElementById('dictReveal').style.display='block';
+  document.getElementById('dictActions').style.display='flex';
+}
+
+function nextDict(){
+  dictIdx++;
+  showDictWord();
+}
+
+function showDictSummary(){
+  document.getElementById('dictCard').style.display='none';
+  document.getElementById('dictActions').style.display='none';
+  const correctCount=dictResults.filter(r=>r.correct).length;
+  const skippedCount=dictResults.filter(r=>r.skipped).length;
+  const wrongCount=dictResults.length-correctCount-skippedCount;
+  const total=dictResults.length;
+  
+  // 检查是否全部通过（无错误无跳过）
+  const allPassed=wrongCount===0&&skippedCount===0;
+  
+  // 如果全部通过且是单元听写，标记所有单词为已掌握
+  if(allPassed&&currentDictCategory){
+    currentDictCategory.words.forEach(w=>{
+      const mastered=getMastered(currentDictCategory.id);
+      if(!mastered.includes(w.word)){
+        addMastered(currentDictCategory.id,w.word);
+      }
+    });
+  }
+  
+  let emoji='💪',title='继续加油';
+  if(allPassed){
+    emoji='🏆';
+    title='🎉 单元完成！';
+  }else if(correctCount===total){
+    emoji='👏';
+    title='听写完成';
+  }else if(correctCount>=total*0.7){
+    emoji='👍';
+    title='表现不错！';
+  }
+  
+  document.getElementById('dictSummaryEmoji').textContent=emoji;
+  document.getElementById('dictSummaryTitle').textContent=title;
+  document.getElementById('dictSummaryDesc').textContent=`<span style="color:var(--accent3)">${correctCount}</span> 正确 · <span style="color:${skippedCount>0?'var(--text2)':'transparent'}">⏭ ${skippedCount} 跳过</span> · <span style="color:${wrongCount>0?'var(--accent2)':'transparent'}">✗ ${wrongCount} 错误</span>${allPassed&&currentDictCategory?'<br><span style="color:var(--accent4);font-size:14px">✨ 恭喜通过该单元！</span>':''}`;
+  // 只显示答错和跳过的词
+  const reviewItems=dictResults.filter(r=>!r.correct);
+  let listHtml='';
+  if(reviewItems.length===0){
+    listHtml='<div style="text-align:center;padding:20px;color:var(--text2)">🎉 全部正确！没有需要复习的词</div>';
+  }else{
+    listHtml+=`<div style="font-size:12px;color:var(--text2);margin-bottom:10px">以下 ${reviewItems.length} 个词需要重点复习：</div>`;
+    reviewItems.forEach((r)=>{
+      const idx=dictResults.indexOf(r);
+      const w=dictWords[idx];
+      const icon=r.skipped?'⏭':'✗';
+      const color=r.skipped?'var(--text2)':'var(--accent2)';
+      listHtml+=`<div class="review-item glass" style="padding:12px 14px;display:block">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+          <span style="color:${color};font-weight:700;font-size:14px">${icon}</span>
+          <span class="word" style="font-size:18px">${r.word}</span>
+          <span style="font-size:12px;color:var(--text2)">${w.phonetic}</span>
+        </div>
+        <div style="font-size:13px;color:var(--accent3);margin-bottom:4px">${w.chinese}</div>
+        <div style="font-size:11px;color:var(--text2);background:rgba(124,92,252,.08);padding:6px 10px;border-radius:6px;border-left:2px solid var(--accent)">${w.pythonRole}</div>
+      </div>`;
+    });
+  }
+  document.getElementById('dictSummaryList').innerHTML=listHtml;
+  document.getElementById('dictSummary').style.display='block';
+}
+
+function retryDictation(){
+  if(currentDictCategory){
+    startDictation(currentDictCategory.id);
+  }else{
+    selectDictCategory();
+  }
+}
+
+// 无限练习模式：学完后继续随机练
+function markWord(known){
+  const w=currentWords[currentIdx];
+  if(known){
+    combo++;const bonus=Math.min(combo-1,5)*2;addScore(10+bonus);
+    // 只有第一次掌握才记录，但继续练习不限制
+    const mastered=getMastered(currentCategory.id);
+    const isFirstTime=!mastered.includes(w.word);
+    if(isFirstTime){
+      addMastered(currentCategory.id,w.word);
+      const dailies=getDailies();if(!dailies.learn5)setDaily('learn5',true);
+    }
+    const rect=document.getElementById('wordCard').getBoundingClientRect();
+    spawnParticles(rect.left+rect.width/2,rect.top+rect.height/2);
+  }else{combo=0;addError(w.word,'wrong')}
+  showCombo();
+  currentIdx++;
+  // 无限循环：学完一轮后打乱继续
+  if(currentIdx>=currentWords.length){
+    currentIdx=0;
+    // Fisher-Yates 洗牌
+    for(let i=currentWords.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [currentWords[i],currentWords[j]]=[currentWords[j],currentWords[i]];
+    }
+  }
+  showCard();
+}
+
+/* ── 复习 ── */
+function renderReview(){
+  const errors=getErrors();
+  const c=document.getElementById('reviewContent');
+
+  const wrongWords=[];
+  const skippedWords=[];
+  Object.entries(errors).forEach(([word,counts])=>{
+    let info=null;
+    VOCAB.forEach(cat=>cat.words.forEach(w=>{if(w.word===word)info=w}));
+    if((counts.wrong||0)>0) wrongWords.push({word,count:counts.wrong,info});
+    if((counts.skipped||0)>0) skippedWords.push({word,count:counts.skipped,info});
+  });
+
+  if(!wrongWords.length&&!skippedWords.length){
+    c.innerHTML='<div class="review-empty"><div class="icon">🎉</div><p>没有错题，继续保持！</p></div>';return;
+  }
+
+  let h='';
+
+  // 答错
+  if(wrongWords.length>0){
+    h+=`<div style="margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="font-size:18px">✗</span>
+        <h3 style="font-size:15px;font-weight:700;color:var(--accent2)">拼写错误</h3>
+        <span style="font-size:12px;color:var(--text2);margin-left:auto">${wrongWords.length} 个词</span>
+      </div>
+      <div class="review-list">`;
+    wrongWords.forEach(item=>{
+      h+=`<div class="review-item glass">
+        <div class="word">${item.word}${item.info?` <span style="color:var(--text2);font-size:12px">${item.info.chinese}</span>`:''}</div>
+        <div class="err-count">错 ${item.count} 次</div>
+        <button class="btn btn-sm btn-secondary" onclick="practiceError('${item.word}')">练习</button>
+        <button class="btn btn-sm btn-danger" onclick="clearError('${item.word}')">清除</button>
+      </div>`;
+    });
+    h+='</div></div>';
+  }
+
+  // 跳过
+  if(skippedWords.length>0){
+    h+=`<div style="margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="font-size:18px">⏭</span>
+        <h3 style="font-size:15px;font-weight:700;color:var(--text2)">跳过不会</h3>
+        <span style="font-size:12px;color:var(--text2);margin-left:auto">${skippedWords.length} 个词</span>
+      </div>
+      <div class="review-list">`;
+    skippedWords.forEach(item=>{
+      h+=`<div class="review-item glass">
+        <div class="word">${item.word}${item.info?` <span style="color:var(--text2);font-size:12px">${item.info.chinese}</span>`:''}</div>
+        <div style="font-size:11px;color:var(--text2);background:rgba(255,255,255,.06);padding:3px 10px;border-radius:8px">跳过 ${item.count} 次</div>
+        <button class="btn btn-sm btn-secondary" onclick="practiceError('${item.word}')">练习</button>
+        <button class="btn btn-sm btn-danger" onclick="clearError('${item.word}')">清除</button>
+      </div>`;
+    });
+    h+='</div></div>';
+  }
+
+  c.innerHTML=h;
+}
+function practiceError(word){let cat=null,wObj=null;VOCAB.forEach(c=>c.words.forEach(w=>{if(w.word===word){cat=c;wObj=w}}));if(cat&&wObj){currentCategory=cat;currentWords=[wObj];currentIdx=0;combo=0;document.getElementById('learnTitle').textContent='错题练习';switchPage('pageLearn');showCard()}}
+function clearError(word){removeError(word);renderReview()}
+
+/* ── 个人中心 ── */
+function renderProfile(){
+  const score=getScore(),streak=getStreak();
+  const totalMastered=VOCAB.reduce((s,c)=>s+getMastered(c.id).length,0);
+  const totalWords=VOCAB.reduce((s,c)=>s+c.words.length,0);
+  const level=Math.floor(score/100)+1;
+  document.getElementById('profileLevel').textContent=`Lv.${level}`;
+  document.getElementById('profileStats').innerHTML=`
+    <div class="stat-card glass"><div class="val" style="color:var(--accent)">${score}</div><div class="label">总积分</div></div>
+    <div class="stat-card glass"><div class="val" style="color:var(--accent3)">${totalMastered}/${totalWords}</div><div class="label">已掌握</div></div>
+    <div class="stat-card glass"><div class="val" style="color:var(--accent4)">${streak}天</div><div class="label">连续打卡</div></div>`;
+  const dailies=getDailies();
+  const tasks=[{key:'learn5',name:'学习5个单词',desc:'今日已学',reward:20,check:dailies.learn5},{key:'review3',name:'复习3个错题',desc:'今日已复习',reward:15,check:dailies.review3},{key:'perfect',name:'一次拼写全对',desc:'拼写模式零失误',reward:30,check:dailies.perfect}];
+  let th='<h3>📋 每日任务</h3>';
+  tasks.forEach(t=>{th+=`<div class="task-item${t.check?' done':''}"><div class="check">${t.check?'✓':''}</div><div class="info"><div class="tname">${t.name}</div><div class="tdesc">${t.desc}</div></div><div class="treward">+${t.reward}⭐</div></div>`});
+  document.getElementById('dailyTasks').innerHTML=th;
+  const badges=[
+    {icon:'🌱',name:'初学者',desc:'完成首次学习',earned:totalMastered>0},
+    {icon:'🔥',name:'连续3天',desc:'打卡3天不间断',earned:streak>=3},
+    {icon:'📖',name:'学者',desc:'掌握20个单词',earned:totalMastered>=20},
+    {icon:'🏆',name:'大师',desc:'掌握全部单词',earned:totalMastered>=totalWords},
+    {icon:'💎',name:'百分俱乐部',desc:'积分达到100',earned:score>=100},
+    {icon:'👑',name:'千分王者',desc:'积分达到1000',earned:score>=1000}
+  ];
+  let bh='';badges.forEach(b=>{bh+=`<div class="badge-card${b.earned?' earned':''}"><div class="icon">${b.earned?b.icon:'🔒'}</div><div class="name">${b.name}</div><div class="desc">${b.desc}</div></div>`});
+  document.getElementById('badgeGrid').innerHTML=bh;
+}
+
+renderHome();
+</script>
+</body>
+</html>
