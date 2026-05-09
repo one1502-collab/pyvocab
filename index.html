@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PyVocab — Python 编程英语词卡</title>
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --bg:#0f0f1a;--bg2:#1a1a2e;--bg3:#25253d;
@@ -33,10 +35,19 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .btn-secondary:hover{border-color:var(--accent);transform:translateY(-2px)}
 .btn-danger{background:var(--accent2);color:#fff}
 .btn-sm{padding:8px 18px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
 
 .topbar{position:sticky;top:0;z-index:100;background:rgba(15,15,26,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
 .topbar-title{font-size:20px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar-right{display:flex;align-items:center;gap:12px}
 .topbar-score{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--accent4)}
+.topbar-user{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);cursor:pointer;padding:6px 12px;border-radius:20px;background:rgba(255,255,255,.06);transition:all .25s}
+.topbar-user:hover{background:rgba(255,255,255,.1)}
+.topbar-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:14px}
+.user-menu{position:absolute;top:50px;right:10px;background:var(--bg2);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:8px;min-width:150px;display:none;z-index:200}
+.user-menu.show{display:block}
+.user-menu-item{padding:10px 14px;cursor:pointer;border-radius:8px;font-size:13px;transition:all .2s}
+.user-menu-item:hover{background:rgba(255,255,255,.08)}
 
 .navbar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(15,15,26,.9);backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-around;padding:8px 0 env(safe-area-inset-bottom,8px)}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 16px;font-size:11px;color:var(--text2);cursor:pointer;transition:all .25s;border-radius:10px}
@@ -44,6 +55,21 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .nav-item.active{color:var(--accent)}
 .nav-item .icon{font-size:22px;transition:transform .25s}
 .nav-item.active .icon{transform:scale(1.15)}
+
+/* 登录页 */
+.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{max-width:380px;width:100%;text-align:center;padding:40px 30px;border-radius:20px;background:var(--bg2);border:1px solid rgba(255,255,255,.08)}
+.login-logo{font-size:64px;margin-bottom:16px}
+.login-title{font-size:28px;font-weight:900;margin-bottom:8px;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.login-desc{font-size:14px;color:var(--text2);margin-bottom:32px}
+.login-form{display:flex;flex-direction:column;gap:12px}
+.login-input{background:var(--bg3);border:2px solid rgba(255,255,255,.1);border-radius:12px;padding:14px 18px;font-size:15px;color:var(--text);outline:none;transition:all .3s;text-align:center}
+.login-input:focus{border-color:var(--accent);box-shadow:0 0 20px rgba(124,92,252,.2)}
+.login-input::placeholder{color:var(--text2)}
+.login-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--text2);font-size:12px}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.1)}
+.login-error{font-size:13px;color:var(--accent2);background:rgba(255,107,107,.1);padding:10px;border-radius:8px;margin-bottom:12px;display:none}
+.login-loading{display:none;align-items:center;justify-content:center;gap:8px;font-size:14px;color:var(--text2)}
 
 /* ══ 首页地图 ══ */
 .hero{text-align:center;padding:32px 0 12px}
@@ -89,7 +115,6 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 
 .word-card{max-width:440px;margin:0 auto 16px;border-radius:var(--radius);overflow:hidden;background:var(--bg2);border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 40px rgba(0,0,0,.3)}
 
-/* 卡片头部：单词+发音 */
 .card-head{padding:28px 24px 16px;text-align:center;position:relative}
 .card-head .word{font-size:40px;font-weight:900;letter-spacing:2px}
 .card-head .phonetic{font-size:15px;color:var(--accent3);margin-top:4px}
@@ -97,7 +122,6 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .card-head .speak-btn:hover{background:var(--accent);color:#fff;transform:scale(1.1)}
 .card-head .speak-btn.speaking{animation:pulse 1s infinite}
 
-/* 卡片主体：释义+作用+示例 */
 .card-body{padding:0 24px 24px}
 .card-section{margin-bottom:14px;animation:slideUp .3s ease}
 .card-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:4px}
@@ -105,7 +129,6 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .card-section .role{font-size:14px;color:var(--text);line-height:1.5;padding:10px 14px;background:rgba(124,92,252,.08);border-radius:10px;border-left:3px solid var(--accent)}
 .card-section .example{font-family:'Cascadia Code','Fira Code',monospace;font-size:12px;background:rgba(0,0,0,.3);padding:12px 14px;border-radius:10px;color:#c8d6e5;line-height:1.6;white-space:pre-wrap;border:1px solid rgba(78,205,196,.12)}
 
-/* ── 拼写区域 ── */
 .spell-section{padding:0 24px 20px;border-top:1px solid rgba(255,255,255,.06);padding-top:16px}
 .spell-section .label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px}
 .spell-row{display:flex;gap:10px;align-items:center}
@@ -119,7 +142,6 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .spell-result.ok{color:var(--accent3)}
 .spell-result.fail{color:var(--accent2)}
 
-/* ── 听写区域 ── */
 .listen-section{padding:0 24px 24px;border-top:1px solid rgba(255,255,255,.06);padding-top:16px}
 .listen-section .label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px}
 .listen-row{display:flex;gap:10px;align-items:center}
@@ -136,18 +158,15 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .listen-result.ok{color:var(--accent3)}
 .listen-result.fail{color:var(--accent2)}
 
-/* ── 底部操作 ── */
 .learn-actions{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:8px}
 .learn-actions .btn{min-width:130px;justify-content:center}
 
-/* combo & 粒子 */
 .combo-display{position:fixed;top:76px;right:16px;z-index:200;font-size:28px;font-weight:900;color:var(--accent4);opacity:0;transition:all .3s;pointer-events:none}
 .combo-display.active{opacity:1}
 .combo-display.pop{animation:comboPop .3s ease}
 #particles{position:fixed;inset:0;pointer-events:none;z-index:150}
 .particle{position:absolute;border-radius:50%;animation:particle .8s ease forwards}
 
-/* ── 复习页 ── */
 .review-empty{text-align:center;padding:60px 20px;color:var(--text2)}
 .review-empty .icon{font-size:64px;margin-bottom:16px}
 .review-list{display:grid;gap:10px;margin-top:16px}
@@ -156,7 +175,6 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .review-item .err-count{font-size:11px;color:var(--accent2);background:rgba(255,107,107,.12);padding:3px 10px;border-radius:8px}
 .review-item .btn{flex-shrink:0}
 
-/* ── 个人中心 ── */
 .profile-header{text-align:center;padding:28px 0 16px}
 .profile-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 10px;animation:float 3s ease-in-out infinite}
 .profile-name{font-size:20px;font-weight:700}
@@ -190,15 +208,50 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 </head>
 <body>
 
-<div class="topbar">
+<!-- ====== 登录页 ====== -->
+<div class="page" id="pageLogin">
+  <div class="login-page">
+    <div class="login-card">
+      <div class="login-logo">🐍</div>
+      <div class="login-title">PyVocab</div>
+      <div class="login-desc">登录后同步你的学习进度</div>
+      <div class="login-error" id="loginError"></div>
+      <div class="login-form">
+        <input class="login-input" id="loginEmail" type="email" placeholder="邮箱地址" autocomplete="email">
+        <input class="login-input" id="loginPassword" type="password" placeholder="密码（至少6位）" autocomplete="new-password">
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="handleLogin()">
+          <span id="loginBtnText">登录 / 注册</span>
+        </button>
+        <div class="login-divider">或者</div>
+        <button class="btn btn-secondary" style="width:100%;justify-content:center" onclick="handleGitHubLogin()">
+          <span>🔗 GitHub 登录</span>
+        </button>
+      </div>
+      <div class="login-loading" id="loginLoading">
+        <span style="animation:pulse 1s infinite">⏳</span> 正在登录...
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topbar" id="mainTopbar" style="display:none">
   <div class="topbar-title">PyVocab</div>
-  <div class="topbar-score">⭐ <span id="topScore">0</span></div>
+  <div class="topbar-right">
+    <div class="topbar-score">⭐ <span id="topScore">0</span></div>
+    <div class="topbar-user" onclick="toggleUserMenu()">
+      <div class="topbar-avatar" id="topbarAvatar">👤</div>
+      <span id="topbarUsername">用户</span>
+    </div>
+    <div class="user-menu" id="userMenu">
+      <div class="user-menu-item" onclick="handleLogout()">🚪 退出登录</div>
+    </div>
+  </div>
 </div>
 <div class="combo-display" id="comboDisplay"></div>
 <div id="particles"></div>
 
 <!-- ====== 首页 ====== -->
-<div class="page active" id="pageHome">
+<div class="page" id="pageHome">
   <div class="container">
     <div class="hero"><h1>🐍 Python 英语词卡</h1><p>从最简单的开始，一步步掌握编程英语</p></div>
     <div class="stats-row" id="statsRow"></div>
@@ -209,7 +262,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
   </div>
 </div>
 
-<!-- ====== 学习页（学习+拼写） ====== -->
+<!-- ====== 学习页 ====== -->
 <div class="page" id="pageLearn">
   <div class="container">
     <div class="learn-top">
@@ -219,8 +272,6 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
     <div style="text-align:center;margin-bottom:12px">
       <span style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(124,92,252,.15);color:var(--accent);border:1px solid rgba(124,92,252,.3)">📖 学习阶段</span>
     </div>
-
-    <!-- 学习卡片 -->
     <div class="word-card" id="wordCard">
       <div class="card-head">
         <div class="word" id="cardWord"></div>
@@ -241,7 +292,6 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
           <div class="example" id="cardExample"></div>
         </div>
       </div>
-      <!-- 拼写练习 -->
       <div class="spell-section">
         <div class="label">✏️ 拼写练习</div>
         <div class="spell-row">
@@ -252,7 +302,6 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
         <button class="btn btn-sm btn-secondary" id="spellRetryBtn" onclick="retrySpell()" style="display:none;margin-top:8px;width:100%">🔁 再练一次</button>
       </div>
     </div>
-
     <div class="learn-actions">
       <button class="btn btn-danger btn-sm" onclick="markWord(false)">不认识</button>
       <button class="btn btn-primary btn-sm" onclick="markWord(true)">下一个 ✓</button>
@@ -270,9 +319,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
     <div style="text-align:center;margin-bottom:12px">
       <span style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(78,205,196,.15);color:var(--accent3);border:1px solid rgba(78,205,196,.3)">👂 听写阶段</span>
     </div>
-
     <div class="word-card" id="dictCard">
-      <!-- 提示区：只显示 Python 作用 -->
       <div class="card-head" style="padding:28px 24px 12px">
         <div style="font-size:13px;color:var(--text2);margin-bottom:8px">👂 听发音，根据 Python 作用写出单词</div>
         <div class="role" id="dictHint" style="text-align:left;margin-top:12px"></div>
@@ -281,7 +328,6 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
         <button class="listen-play-btn" id="dictPlayBtn" onclick="playDict()" title="播放发音" style="width:52px;height:52px;font-size:24px">🔊</button>
         <div style="font-size:12px;color:var(--text2);line-height:1.5">点击播放听发音<br>可重复播放</div>
       </div>
-      <!-- 听写输入 -->
       <div class="listen-section" style="border-top:1px solid rgba(255,255,255,.06);padding-top:16px">
         <div class="label">写出你听到的单词</div>
         <div class="listen-row">
@@ -291,7 +337,6 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
         <div class="listen-result" id="dictResult"></div>
         <button class="btn btn-sm btn-secondary" onclick="skipDict()" style="margin-top:10px;width:100%">⏭️ 跳过这题</button>
       </div>
-      <!-- 答对或跳过后展示详情 -->
       <div id="dictReveal" style="display:none;padding:0 24px 24px">
         <div class="card-section" style="margin-bottom:0">
           <div class="card-section-label">单词详情</div>
@@ -303,12 +348,9 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
         </div>
       </div>
     </div>
-
     <div class="learn-actions" id="dictActions" style="display:none">
       <button class="btn btn-primary btn-sm" onclick="nextDict()">下一题 →</button>
     </div>
-
-    <!-- 听写结果汇总 -->
     <div id="dictSummary" style="display:none">
       <div style="text-align:center;padding:30px 0 20px">
         <div style="font-size:48px;margin-bottom:10px" id="dictSummaryEmoji">🎉</div>
@@ -336,8 +378,8 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 <div class="page" id="pageProfile">
   <div class="container">
     <div class="profile-header">
-      <div class="profile-avatar">🐍</div>
-      <div class="profile-name">学习者</div>
+      <div class="profile-avatar" id="profileAvatar">🐍</div>
+      <div class="profile-name" id="profileName">学习者</div>
       <div class="profile-level" id="profileLevel">Lv.1</div>
     </div>
     <div class="stats-row" id="profileStats"></div>
@@ -347,7 +389,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
   </div>
 </div>
 
-<div class="navbar">
+<div class="navbar" id="mainNavbar" style="display:none">
   <div class="nav-item active" onclick="switchPage('pageHome',this)"><span class="icon">🗺️</span>地图</div>
   <div class="nav-item" onclick="switchPage('pageLearn',this)"><span class="icon">📚</span>学习</div>
   <div class="nav-item" onclick="switchPage('pageReview',this)"><span class="icon">📖</span>复习</div>
@@ -355,6 +397,13 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 </div>
 
 <script>
+// ====== Supabase 配置 ======
+const SUPABASE_URL = 'https://urugaofhgpedggntvdfl.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVydWdhb2ZoZ3BlZGdnbnR2ZGZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyODE2NzQsImV4cCI6MjA5Mzg1NzY3NH0.DsVooQsz-FgV1h1PKYLI791LqUjrSxkQjZbIr4eTbFM';
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ====== 词库数据 ======
 const VOCAB=[
   {id:"level-1",name:"Hello Python",icon:"🟢",unlockScore:0,desc:"第一天写代码就会遇到的词",words:[
     {word:"print",phonetic:"/prɪnt/",chinese:"打印；输出",pythonRole:"内置函数，将内容输出到控制台",pythonExample:"print('Hello, World!')"},
@@ -484,34 +533,269 @@ const VOCAB=[
   ]}
 ];
 
+// ====== 全局状态 ======
+let currentUser = null;
+let cloudProgress = {};
 let currentCategory=null,currentWords=[],currentIdx=0,combo=0;
-// 听写状态
 let dictWords=[],dictIdx=0,dictResults=[],dictAnswered=false;
+let currentDictCategory=null,isHomeDict=false;
 
-function loadProgress(){try{return JSON.parse(localStorage.getItem('pyvocab4'))||{}}catch{return{}}}
-function saveProgress(p){localStorage.setItem('pyvocab4',JSON.stringify(p))}
-function getScore(){return loadProgress().score||0}
-function addScore(n){const p=loadProgress();p.score=(p.score||0)+n;saveProgress(p);document.getElementById('topScore').textContent=p.score}
-function getMastered(id){const p=loadProgress();return p.mastered&&p.mastered[id]?p.mastered[id]:[]}
-function addMastered(id,word){const p=loadProgress();if(!p.mastered)p.mastered={};if(!p.mastered[id])p.mastered[id]=[];if(!p.mastered[id].includes(word)){p.mastered[id].push(word);saveProgress(p)}}
-function getErrors(){return loadProgress().errors||{}}
-// type: 'wrong' | 'skipped'
-function addError(word,type='wrong'){
-  const p=loadProgress();
-  if(!p.errors)p.errors={};
-  if(!p.errors[word])p.errors[word]={wrong:0,skipped:0};
-  p.errors[word][type]=(p.errors[word][type]||0)+1;
-  saveProgress(p);
+// ====== 认证函数 ======
+async function checkAuth() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    currentUser = session.user;
+    await loadCloudProgress();
+    showMainApp();
+  } else {
+    showLoginPage();
+  }
+  
+  // 监听认证状态变化
+  supabase.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      currentUser = session.user;
+      await loadCloudProgress();
+      showMainApp();
+    } else if (event === 'SIGNED_OUT') {
+      currentUser = null;
+      cloudProgress = {};
+      showLoginPage();
+    }
+  });
 }
-function removeError(word){const p=loadProgress();if(p.errors)delete p.errors[word];saveProgress(p)}
-function getStreak(){const p=loadProgress();const today=new Date().toDateString();if(p.lastDay===today)return p.streak||0;const yd=new Date(Date.now()-86400000).toDateString();p.streak=(p.lastDay===yd)?(p.streak||0)+1:1;p.lastDay=today;saveProgress(p);return p.streak}
-function getDailies(){const p=loadProgress();const today=new Date().toDateString();if(p.dailyDay!==today){p.dailyDay=today;p.dailies={learn5:false,review3:false,perfect:false};saveProgress(p)}return p.dailies}
-function setDaily(k,v){const p=loadProgress();if(!p.dailies)p.dailies={};p.dailies[k]=v;saveProgress(p)}
 
+function showLoginPage() {
+  document.getElementById('pageLogin').classList.add('active');
+  document.getElementById('mainTopbar').style.display = 'none';
+  document.getElementById('mainNavbar').style.display = 'none';
+  document.querySelectorAll('.page').forEach(p => {
+    if (p.id !== 'pageLogin') p.classList.remove('active');
+  });
+}
+
+function showMainApp() {
+  document.getElementById('pageLogin').classList.remove('active');
+  document.getElementById('mainTopbar').style.display = 'flex';
+  document.getElementById('mainNavbar').style.display = 'flex';
+  document.getElementById('pageHome').classList.add('active');
+  
+  // 更新用户信息显示
+  updateUserInfo();
+  renderHome();
+}
+
+function updateUserInfo() {
+  if (!currentUser) return;
+  
+  const email = currentUser.email || '';
+  const name = currentUser.user_metadata?.full_name || 
+               currentUser.user_metadata?.user_name || 
+               email.split('@')[0];
+  
+  document.getElementById('topbarUsername').textContent = name;
+  document.getElementById('topbarAvatar').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('profileName').textContent = name;
+}
+
+function toggleUserMenu() {
+  document.getElementById('userMenu').classList.toggle('show');
+}
+
+// 点击其他地方关闭菜单
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.topbar-user') && !e.target.closest('.user-menu')) {
+    document.getElementById('userMenu').classList.remove('show');
+  }
+});
+
+async function handleLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errorEl = document.getElementById('loginError');
+  const loadingEl = document.getElementById('loginLoading');
+  const btnText = document.getElementById('loginBtnText');
+  
+  if (!email || !password) {
+    errorEl.textContent = '请输入邮箱和密码';
+    errorEl.style.display = 'block';
+    return;
+  }
+  
+  if (password.length < 6) {
+    errorEl.textContent = '密码至少6位';
+    errorEl.style.display = 'block';
+    return;
+  }
+  
+  errorEl.style.display = 'none';
+  loadingEl.style.display = 'flex';
+  btnText.textContent = '登录中...';
+  
+  // 先尝试登录
+  let { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  
+  // 如果登录失败，尝试注册
+  if (error) {
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ 
+      email, 
+      password,
+      options: { emailRedirectTo: window.location.origin }
+    });
+    
+    if (signUpError) {
+      errorEl.textContent = signUpError.message;
+      errorEl.style.display = 'block';
+      loadingEl.style.display = 'none';
+      btnText.textContent = '登录 / 注册';
+      return;
+    }
+    
+    // 注册成功
+    if (signUpData.user && !signUpData.session) {
+      errorEl.textContent = '注册成功！请检查邮箱验证后登录';
+      errorEl.style.display = 'block';
+      errorEl.style.background = 'rgba(78,205,196,.1)';
+      errorEl.style.color = 'var(--accent3)';
+    }
+  }
+  
+  loadingEl.style.display = 'none';
+  btnText.textContent = '登录 / 注册';
+}
+
+async function handleGitHubLogin() {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'github',
+    options: { redirectTo: window.location.origin }
+  });
+  
+  if (error) {
+    document.getElementById('loginError').textContent = error.message;
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+
+async function handleLogout() {
+  await supabase.auth.signOut();
+  document.getElementById('userMenu').classList.remove('show');
+}
+
+// ====== 云端进度存储 ======
+async function loadCloudProgress() {
+  if (!currentUser) return;
+  
+  const { data, error } = await supabase
+    .from('progress')
+    .select('*')
+    .eq('user_id', currentUser.id);
+  
+  if (error) {
+    console.error('加载进度失败:', error);
+    return;
+  }
+  
+  cloudProgress = {};
+  if (data) {
+    data.forEach(item => {
+      cloudProgress[item.word_id] = {
+        mastered: item.mastered,
+        wrong_count: item.wrong_count || 0,
+        skip_count: item.skip_count || 0,
+        score: item.score || 0
+      };
+    });
+  }
+}
+
+async function saveCloudProgress(wordId, updates) {
+  if (!currentUser) return;
+  
+  const existing = cloudProgress[wordId] || { mastered: false, wrong_count: 0, skip_count: 0, score: 0 };
+  const newData = { ...existing, ...updates };
+  
+  const { error } = await supabase
+    .from('progress')
+    .upsert({
+      user_id: currentUser.id,
+      word_id: wordId,
+      mastered: newData.mastered,
+      wrong_count: newData.wrong_count,
+      skip_count: newData.skip_count,
+      score: newData.score,
+      last_practice: new Date().toISOString()
+    }, { onConflict: 'user_id,word_id' });
+  
+  if (error) {
+    console.error('保存进度失败:', error);
+  } else {
+    cloudProgress[wordId] = newData;
+  }
+}
+
+// ====== 进度管理（替换原有的 localStorage） ======
+function getScore() {
+  let total = 0;
+  Object.values(cloudProgress).forEach(p => total += p.score || 0);
+  return total;
+}
+
+function addScore(n, wordId) {
+  if (!wordId) return;
+  const existing = cloudProgress[wordId] || { mastered: false, wrong_count: 0, skip_count: 0, score: 0 };
+  saveCloudProgress(wordId, { score: (existing.score || 0) + n });
+}
+
+function getMastered(categoryId) {
+  const words = [];
+  VOCAB.find(c => c.id === categoryId)?.words.forEach(w => {
+    if (cloudProgress[w.word]?.mastered) words.push(w.word);
+  });
+  return words;
+}
+
+function addMastered(categoryId, word) {
+  saveCloudProgress(word, { mastered: true });
+}
+
+function getErrors() {
+  const errors = {};
+  Object.entries(cloudProgress).forEach(([wordId, data]) => {
+    if ((data.wrong_count > 0) || (data.skip_count > 0)) {
+      errors[wordId] = { wrong: data.wrong_count, skipped: data.skip_count };
+    }
+  });
+  return errors;
+}
+
+function addError(word, type = 'wrong') {
+  const existing = cloudProgress[word] || { mastered: false, wrong_count: 0, skip_count: 0, score: 0 };
+  if (type === 'wrong') {
+    saveCloudProgress(word, { wrong_count: (existing.wrong_count || 0) + 1 });
+  } else {
+    saveCloudProgress(word, { skip_count: (existing.skip_count || 0) + 1 });
+  }
+}
+
+function removeError(word) {
+  saveCloudProgress(word, { wrong_count: 0, skip_count: 0 });
+}
+
+function getStreak() {
+  // 简化：从 cloudProgress 计算
+  let streak = 0;
+  const dates = new Set();
+  Object.entries(cloudProgress).forEach(([wordId, data]) => {
+    // 假设有 last_practice 字段
+  });
+  return Math.max(1, Math.floor(getScore() / 50)); // 简化计算
+}
+
+// ====== UI 函数 ======
 function spawnParticles(x,y,count=12){const c=document.getElementById('particles'),colors=['#7c5cfc','#4ecdc4','#ffd93d','#ff6b6b','#a29bfe'];for(let i=0;i<count;i++){const p=document.createElement('div');p.className='particle';const sz=4+Math.random()*8,a=Math.random()*Math.PI*2,d=40+Math.random()*80;p.style.cssText=`left:${x}px;top:${y}px;width:${sz}px;height:${sz}px;background:${colors[i%colors.length]};--px:${Math.cos(a)*d}px;--py:${Math.sin(a)*d}px`;c.appendChild(p);setTimeout(()=>p.remove(),900)}}
 function showCombo(){const el=document.getElementById('comboDisplay');if(combo<2){el.classList.remove('active');return}el.textContent=`🔥 x${combo}`;el.classList.add('active');el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop')}
 
-/* ── 语音引擎：兼容处理 ── */
+/* 语音引擎 */
 let voicesReady=false;
 if('speechSynthesis' in window){
   if(speechSynthesis.getVoices().length>0)voicesReady=true;
@@ -522,13 +806,11 @@ function speak(text,rate=1){
   speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(text);
   u.lang='en-US';u.rate=rate;u.volume=1;
-  // 尝试选英文语音
   if(voicesReady){
     const voices=speechSynthesis.getVoices();
     const en=voices.find(v=>v.lang.startsWith('en'))||voices[0];
     if(en)u.voice=en;
   }
-  // 某些浏览器需要延迟才能播
   setTimeout(()=>speechSynthesis.speak(u),50);
   return u;
 }
@@ -559,12 +841,12 @@ function switchPage(pageId,navEl){
   if(pageId==='pageReview')renderReview();
 }
 
-/* ── 首页 ── */
+/* 首页 */
 function renderHome(){
   const score=getScore();document.getElementById('topScore').textContent=score;
   const totalWords=VOCAB.reduce((s,c)=>s+c.words.length,0);
   let totalMastered=0;VOCAB.forEach(c=>totalMastered+=getMastered(c.id).length);
-    const errs=getErrors();
+  const errs=getErrors();
   const totalErrors=Object.values(errs).reduce((a,b)=>a+(b.wrong||0)+(b.skipped||0),0);
   document.getElementById('statsRow').innerHTML=`
     <div class="stat-card glass"><div class="val" style="color:var(--accent3)">${totalMastered}</div><div class="label">已掌握</div></div>
@@ -623,39 +905,34 @@ function startCategory(cat){
   switchPage('pageLearn');showCard();
 }
 
-/* ── 学习页：合一卡片 ── */
+/* 学习页 */
 function showCard(){
   if(!currentCategory)return;
   if(!currentWords.length)currentWords=[...currentCategory.words];
   if(currentIdx>=currentWords.length)currentIdx=0;
   const w=currentWords[currentIdx];
   document.getElementById('learnCounter').textContent=`${currentIdx+1}/${currentWords.length}`;
-  // 卡片信息
   document.getElementById('cardWord').textContent=w.word;
   document.getElementById('cardPhonetic').textContent=w.phonetic;
   document.getElementById('cardChinese').textContent=w.chinese;
   document.getElementById('cardRole').textContent=w.pythonRole;
   document.getElementById('cardExample').textContent=w.pythonExample;
-  // 重置拼写
   spellCorrect=false;
   const si=document.getElementById('spellInput');si.value='';si.className='spell-input';
   document.getElementById('spellResult').textContent='';document.getElementById('spellResult').className='spell-result';
   const retryBtn=document.getElementById('spellRetryBtn');if(retryBtn)retryBtn.style.display='none';
-  // 重置听写
   document.getElementById('listenInput').value='';document.getElementById('listenInput').className='listen-input';
   document.getElementById('listenResult').textContent='';document.getElementById('listenResult').className='listen-result';
 }
 
-// 拼写练习：支持多次练习
 let spellCorrect=false;
 function checkSpell(){
   const w=currentWords[currentIdx];const inp=document.getElementById('spellInput');const res=document.getElementById('spellResult');
   if(inp.value.trim().toLowerCase()===w.word.toLowerCase()){
     if(!spellCorrect){
       inp.className='spell-input correct';res.textContent='✓ 正确！点击 🔁 再练一次';res.className='spell-result ok';
-      addScore(5);const rect=inp.getBoundingClientRect();spawnParticles(rect.left+rect.width/2,rect.top);
+      addScore(5, w.word);const rect=inp.getBoundingClientRect();spawnParticles(rect.left+rect.width/2,rect.top);
       spellCorrect=true;
-      // 显示再练按钮
       document.getElementById('spellRetryBtn').style.display='inline-flex';
     }
   }else{
@@ -677,24 +954,20 @@ function checkListen(){
   const w=currentWords[currentIdx];const inp=document.getElementById('listenInput');const res=document.getElementById('listenResult');
   if(inp.value.trim().toLowerCase()===w.word.toLowerCase()){
     inp.className='listen-input correct';res.textContent='✓ 听写正确！';res.className='listen-result ok';
-    addScore(5);const rect=inp.getBoundingClientRect();spawnParticles(rect.left+rect.width/2,rect.top);
+    addScore(5, w.word);const rect=inp.getBoundingClientRect();spawnParticles(rect.left+rect.width/2,rect.top);
   }else{
     inp.className='listen-input wrong';res.textContent=`✗ 正确答案: ${w.word}`;res.className='listen-result fail';
     addError(w.word,'wrong');setTimeout(()=>{inp.className='listen-input'},500);
   }
 }
 
-/* ── 听写测试功能 ── */
-let currentDictCategory=null,isHomeDict=false;
-
-// 从首页地图进入听写
+/* 听写测试 */
 function startDictationFromHome(categoryId){
   isHomeDict=true;
   startDictation(categoryId);
 }
 
 function selectDictCategory(){
-  // 显示关卡选择
   const score=getScore();
   let html='<div style="text-align:center;padding:40px 20px"><h2 style="margin-bottom:20px">选择听写单元</h2><div style="display:grid;gap:12px;max-width:400px;margin:0 auto">';
   VOCAB.forEach((cat,idx)=>{
@@ -714,15 +987,12 @@ function startDictation(categoryId){
   const cat=VOCAB.find(c=>c.id===categoryId);
   if(!cat){selectDictCategory();return;}
   currentDictCategory=cat;
-  // 使用该关卡所有单词
   dictWords=[...cat.words];
-  // 打乱顺序
   for(let i=dictWords.length-1;i>0;i--){
     const j=Math.floor(Math.random()*(i+1));
     [dictWords[i],dictWords[j]]=[dictWords[j],dictWords[i]];
   }
   dictIdx=0;dictResults=[];dictAnswered=false;
-  // 恢复听写页面结构
   restoreDictationPage();
   document.getElementById('dictSummary').style.display='none';
   document.getElementById('dictCard').style.display='block';
@@ -740,7 +1010,6 @@ function restoreDictationPage(){
     <div style="text-align:center;margin-bottom:12px">
       <span style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(78,205,196,.15);color:var(--accent3);border:1px solid rgba(78,205,196,.3)">👂 听写阶段 · <span id="dictCatName"></span></span>
     </div>
-
     <div class="word-card" id="dictCard">
       <div class="card-head" style="padding:28px 24px 12px">
         <div style="font-size:13px;color:var(--text2);margin-bottom:8px">👂 听发音，根据 Python 作用写出单词</div>
@@ -770,11 +1039,9 @@ function restoreDictationPage(){
         </div>
       </div>
     </div>
-
     <div class="learn-actions" id="dictActions" style="display:none">
       <button class="btn btn-primary btn-sm" onclick="nextDict()">下一题 →</button>
     </div>
-
     <div id="dictSummary" style="display:none">
       <div style="text-align:center;padding:30px 0 20px">
         <div style="font-size:48px;margin-bottom:10px" id="dictSummaryEmoji">🎉</div>
@@ -798,7 +1065,6 @@ function showDictWord(){
   document.getElementById('dictTitle').textContent='听写测试';
   const catNameEl=document.getElementById('dictCatName');
   if(catNameEl&&currentDictCategory)catNameEl.textContent=currentDictCategory.name;
-  // 只显示 Python 作用，隐藏单词
   document.getElementById('dictHint').textContent=w.pythonRole;
   document.getElementById('dictInput').value='';
   document.getElementById('dictInput').className='listen-input';
@@ -806,7 +1072,6 @@ function showDictWord(){
   document.getElementById('dictResult').textContent='';
   document.getElementById('dictReveal').style.display='none';
   document.getElementById('dictActions').style.display='none';
-  // 自动播放一次
   setTimeout(()=>playDict(),300);
 }
 
@@ -831,19 +1096,14 @@ function checkDict(){
     inp.className='listen-input correct';
     res.textContent='✓ 正确！';
     res.className='listen-result ok';
-    addScore(10);
+    addScore(10, w.word);
     dictResults.push({word:w.word,correct:true});
     spawnParticles(inp.getBoundingClientRect().left+inp.offsetWidth/2,inp.getBoundingClientRect().top);
     revealDictWord();
-    // 答对后自动跳转下一题
     setTimeout(()=>{
-      if(dictIdx<dictWords.length-1){
-        nextDict();
-      }else{
-        showDictSummary();
-      }
+      if(dictIdx<dictWords.length-1){nextDict();}else{showDictSummary();}
     },1200);
-    }else{
+  }else{
     inp.className='listen-input wrong';
     res.textContent='✗ 错误';
     res.className='listen-result fail';
@@ -862,7 +1122,7 @@ function skipDict(){
   inp.className='listen-input';
   document.getElementById('dictResult').textContent='⏭️ 已跳过';
   document.getElementById('dictResult').className='listen-result';
-    addError(w.word,'skipped');
+  addError(w.word,'skipped');
   dictResults.push({word:w.word,correct:false,skipped:true});
   revealDictWord();
 }
@@ -890,11 +1150,8 @@ function showDictSummary(){
   const skippedCount=dictResults.filter(r=>r.skipped).length;
   const wrongCount=dictResults.length-correctCount-skippedCount;
   const total=dictResults.length;
-  
-  // 检查是否全部通过（无错误无跳过）
   const allPassed=wrongCount===0&&skippedCount===0;
   
-  // 如果全部通过且是单元听写，标记所有单词为已掌握
   if(allPassed&&currentDictCategory){
     currentDictCategory.words.forEach(w=>{
       const mastered=getMastered(currentDictCategory.id);
@@ -905,21 +1162,14 @@ function showDictSummary(){
   }
   
   let emoji='💪',title='继续加油';
-  if(allPassed){
-    emoji='🏆';
-    title='🎉 单元完成！';
-  }else if(correctCount===total){
-    emoji='👏';
-    title='听写完成';
-  }else if(correctCount>=total*0.7){
-    emoji='👍';
-    title='表现不错！';
-  }
+  if(allPassed){emoji='🏆';title='🎉 单元完成！';}
+  else if(correctCount===total){emoji='👏';title='听写完成';}
+  else if(correctCount>=total*0.7){emoji='👍';title='表现不错！';}
   
   document.getElementById('dictSummaryEmoji').textContent=emoji;
   document.getElementById('dictSummaryTitle').textContent=title;
   document.getElementById('dictSummaryDesc').textContent=`<span style="color:var(--accent3)">${correctCount}</span> 正确 · <span style="color:${skippedCount>0?'var(--text2)':'transparent'}">⏭ ${skippedCount} 跳过</span> · <span style="color:${wrongCount>0?'var(--accent2)':'transparent'}">✗ ${wrongCount} 错误</span>${allPassed&&currentDictCategory?'<br><span style="color:var(--accent4);font-size:14px">✨ 恭喜通过该单元！</span>':''}`;
-  // 只显示答错和跳过的词
+  
   const reviewItems=dictResults.filter(r=>!r.correct);
   let listHtml='';
   if(reviewItems.length===0){
@@ -947,34 +1197,26 @@ function showDictSummary(){
 }
 
 function retryDictation(){
-  if(currentDictCategory){
-    startDictation(currentDictCategory.id);
-  }else{
-    selectDictCategory();
-  }
+  if(currentDictCategory){startDictation(currentDictCategory.id);}
+  else{selectDictCategory();}
 }
 
-// 无限练习模式：学完后继续随机练
 function markWord(known){
   const w=currentWords[currentIdx];
   if(known){
-    combo++;const bonus=Math.min(combo-1,5)*2;addScore(10+bonus);
-    // 只有第一次掌握才记录，但继续练习不限制
+    combo++;const bonus=Math.min(combo-1,5)*2;addScore(10+bonus, w.word);
     const mastered=getMastered(currentCategory.id);
     const isFirstTime=!mastered.includes(w.word);
     if(isFirstTime){
       addMastered(currentCategory.id,w.word);
-      const dailies=getDailies();if(!dailies.learn5)setDaily('learn5',true);
     }
     const rect=document.getElementById('wordCard').getBoundingClientRect();
     spawnParticles(rect.left+rect.width/2,rect.top+rect.height/2);
   }else{combo=0;addError(w.word,'wrong')}
   showCombo();
   currentIdx++;
-  // 无限循环：学完一轮后打乱继续
   if(currentIdx>=currentWords.length){
     currentIdx=0;
-    // Fisher-Yates 洗牌
     for(let i=currentWords.length-1;i>0;i--){
       const j=Math.floor(Math.random()*(i+1));
       [currentWords[i],currentWords[j]]=[currentWords[j],currentWords[i]];
@@ -983,11 +1225,10 @@ function markWord(known){
   showCard();
 }
 
-/* ── 复习 ── */
+/* 复习 */
 function renderReview(){
   const errors=getErrors();
   const c=document.getElementById('reviewContent');
-
   const wrongWords=[];
   const skippedWords=[];
   Object.entries(errors).forEach(([word,counts])=>{
@@ -996,14 +1237,10 @@ function renderReview(){
     if((counts.wrong||0)>0) wrongWords.push({word,count:counts.wrong,info});
     if((counts.skipped||0)>0) skippedWords.push({word,count:counts.skipped,info});
   });
-
   if(!wrongWords.length&&!skippedWords.length){
     c.innerHTML='<div class="review-empty"><div class="icon">🎉</div><p>没有错题，继续保持！</p></div>';return;
   }
-
   let h='';
-
-  // 答错
   if(wrongWords.length>0){
     h+=`<div style="margin-bottom:24px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
@@ -1022,8 +1259,6 @@ function renderReview(){
     });
     h+='</div></div>';
   }
-
-  // 跳过
   if(skippedWords.length>0){
     h+=`<div style="margin-bottom:24px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
@@ -1042,13 +1277,13 @@ function renderReview(){
     });
     h+='</div></div>';
   }
-
   c.innerHTML=h;
 }
+
 function practiceError(word){let cat=null,wObj=null;VOCAB.forEach(c=>c.words.forEach(w=>{if(w.word===word){cat=c;wObj=w}}));if(cat&&wObj){currentCategory=cat;currentWords=[wObj];currentIdx=0;combo=0;document.getElementById('learnTitle').textContent='错题练习';switchPage('pageLearn');showCard()}}
 function clearError(word){removeError(word);renderReview()}
 
-/* ── 个人中心 ── */
+/* 个人中心 */
 function renderProfile(){
   const score=getScore(),streak=getStreak();
   const totalMastered=VOCAB.reduce((s,c)=>s+getMastered(c.id).length,0);
@@ -1059,11 +1294,6 @@ function renderProfile(){
     <div class="stat-card glass"><div class="val" style="color:var(--accent)">${score}</div><div class="label">总积分</div></div>
     <div class="stat-card glass"><div class="val" style="color:var(--accent3)">${totalMastered}/${totalWords}</div><div class="label">已掌握</div></div>
     <div class="stat-card glass"><div class="val" style="color:var(--accent4)">${streak}天</div><div class="label">连续打卡</div></div>`;
-  const dailies=getDailies();
-  const tasks=[{key:'learn5',name:'学习5个单词',desc:'今日已学',reward:20,check:dailies.learn5},{key:'review3',name:'复习3个错题',desc:'今日已复习',reward:15,check:dailies.review3},{key:'perfect',name:'一次拼写全对',desc:'拼写模式零失误',reward:30,check:dailies.perfect}];
-  let th='<h3>📋 每日任务</h3>';
-  tasks.forEach(t=>{th+=`<div class="task-item${t.check?' done':''}"><div class="check">${t.check?'✓':''}</div><div class="info"><div class="tname">${t.name}</div><div class="tdesc">${t.desc}</div></div><div class="treward">+${t.reward}⭐</div></div>`});
-  document.getElementById('dailyTasks').innerHTML=th;
   const badges=[
     {icon:'🌱',name:'初学者',desc:'完成首次学习',earned:totalMastered>0},
     {icon:'🔥',name:'连续3天',desc:'打卡3天不间断',earned:streak>=3},
@@ -1074,9 +1304,11 @@ function renderProfile(){
   ];
   let bh='';badges.forEach(b=>{bh+=`<div class="badge-card${b.earned?' earned':''}"><div class="icon">${b.earned?b.icon:'🔒'}</div><div class="name">${b.name}</div><div class="desc">${b.desc}</div></div>`});
   document.getElementById('badgeGrid').innerHTML=bh;
+  document.getElementById('dailyTasks').innerHTML='';
 }
 
-renderHome();
+// ====== 初始化 ======
+checkAuth();
 </script>
 </body>
 </html>
