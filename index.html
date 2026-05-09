@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PyVocab — Python 编程英语词卡</title>
+<title>PyVocab 鈥?Python 缂栫▼鑻辫璇嶅崱</title>
 <!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -56,7 +56,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .nav-item .icon{font-size:22px;transition:transform .25s}
 .nav-item.active .icon{transform:scale(1.15)}
 
-/* 登录页 */
+/* 鐧诲綍椤?*/
 .login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .login-card{max-width:380px;width:100%;text-align:center;padding:40px 30px;border-radius:20px;background:var(--bg2);border:1px solid rgba(255,255,255,.08)}
 .login-logo{font-size:64px;margin-bottom:16px}
@@ -71,7 +71,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .login-error{font-size:13px;color:var(--accent2);background:rgba(255,107,107,.1);padding:10px;border-radius:8px;margin-bottom:12px;display:none}
 .login-loading{display:none;align-items:center;justify-content:center;gap:8px;font-size:14px;color:var(--text2)}
 
-/* ══ 首页地图 ══ */
+/* 鈺愨晲 棣栭〉鍦板浘 鈺愨晲 */
 .hero{text-align:center;padding:32px 0 12px}
 .hero h1{font-size:30px;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent3),var(--accent4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
 .hero p{color:var(--text2);font-size:14px}
@@ -108,7 +108,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .badge-progress{background:rgba(255,217,61,.12);color:var(--accent4)}
 .badge-locked{background:rgba(255,255,255,.06);color:var(--text2)}
 
-/* ══ 学习页：合一卡片 ══ */
+/* 鈺愨晲 瀛︿範椤碉細鍚堜竴鍗＄墖 鈺愨晲 */
 .learn-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .learn-top h2{font-size:20px;font-weight:700}
 .counter{font-size:13px;color:var(--text2);font-weight:600}
@@ -208,27 +208,27 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 </head>
 <body>
 
-<!-- ====== 登录页 ====== -->
+<!-- ====== 鐧诲綍椤?====== -->
 <div class="page" id="pageLogin">
   <div class="login-page">
     <div class="login-card">
-      <div class="login-logo">🐍</div>
+      <div class="login-logo">馃悕</div>
       <div class="login-title">PyVocab</div>
-      <div class="login-desc">登录后同步你的学习进度</div>
+      <div class="login-desc">鐧诲綍鍚庡悓姝ヤ綘鐨勫涔犺繘搴?/div>
       <div class="login-error" id="loginError"></div>
       <div class="login-form">
-        <input class="login-input" id="loginEmail" type="email" placeholder="邮箱地址" autocomplete="email">
-        <input class="login-input" id="loginPassword" type="password" placeholder="密码（至少6位）" autocomplete="new-password">
+        <input class="login-input" id="loginEmail" type="email" placeholder="閭鍦板潃" autocomplete="email">
+        <input class="login-input" id="loginPassword" type="password" placeholder="瀵嗙爜锛堣嚦灏?浣嶏級" autocomplete="new-password">
         <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="handleLogin()">
-          <span id="loginBtnText">登录 / 注册</span>
+          <span id="loginBtnText">鐧诲綍 / 娉ㄥ唽</span>
         </button>
-        <div class="login-divider">或者</div>
+        <div class="login-divider">鎴栬€?/div>
         <button class="btn btn-secondary" style="width:100%;justify-content:center" onclick="handleGitHubLogin()">
-          <span>🔗 GitHub 登录</span>
+          <span>馃敆 GitHub 鐧诲綍</span>
         </button>
       </div>
       <div class="login-loading" id="loginLoading">
-        <span style="animation:pulse 1s infinite">⏳</span> 正在登录...
+        <span style="animation:pulse 1s infinite">鈴?/span> 姝ｅ湪鐧诲綍...
       </div>
     </div>
   </div>
@@ -237,109 +237,109 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 <div class="topbar" id="mainTopbar" style="display:none">
   <div class="topbar-title">PyVocab</div>
   <div class="topbar-right">
-    <div class="topbar-score">⭐ <span id="topScore">0</span></div>
+    <div class="topbar-score">猸?<span id="topScore">0</span></div>
     <div class="topbar-user" onclick="toggleUserMenu()">
-      <div class="topbar-avatar" id="topbarAvatar">👤</div>
-      <span id="topbarUsername">用户</span>
+      <div class="topbar-avatar" id="topbarAvatar">馃懁</div>
+      <span id="topbarUsername">鐢ㄦ埛</span>
     </div>
     <div class="user-menu" id="userMenu">
-      <div class="user-menu-item" onclick="handleLogout()">🚪 退出登录</div>
+      <div class="user-menu-item" onclick="handleLogout()">馃毆 閫€鍑虹櫥褰?/div>
     </div>
   </div>
 </div>
 <div class="combo-display" id="comboDisplay"></div>
 <div id="particles"></div>
 
-<!-- ====== 首页 ====== -->
+<!-- ====== 棣栭〉 ====== -->
 <div class="page" id="pageHome">
   <div class="container">
-    <div class="hero"><h1>🐍 Python 英语词卡</h1><p>从最简单的开始，一步步掌握编程英语</p></div>
+    <div class="hero"><h1>馃悕 Python 鑻辫璇嶅崱</h1><p>浠庢渶绠€鍗曠殑寮€濮嬶紝涓€姝ユ鎺屾彙缂栫▼鑻辫</p></div>
     <div class="stats-row" id="statsRow"></div>
     <div style="text-align:center;margin:16px 0">
-      <button class="btn btn-primary" onclick="selectDictCategory()" style="min-width:200px">🎧 开始听写测试</button>
+      <button class="btn btn-primary" onclick="selectDictCategory()" style="min-width:200px">馃帶 寮€濮嬪惉鍐欐祴璇?/button>
     </div>
     <div class="map-container" id="mapContainer"></div>
   </div>
 </div>
 
-<!-- ====== 学习页 ====== -->
+<!-- ====== 瀛︿範椤?====== -->
 <div class="page" id="pageLearn">
   <div class="container">
     <div class="learn-top">
-      <h2 id="learnTitle">学习</h2>
+      <h2 id="learnTitle">瀛︿範</h2>
       <span class="counter" id="learnCounter">0/0</span>
     </div>
     <div style="text-align:center;margin-bottom:12px">
-      <span style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(124,92,252,.15);color:var(--accent);border:1px solid rgba(124,92,252,.3)">📖 学习阶段</span>
+      <span style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(124,92,252,.15);color:var(--accent);border:1px solid rgba(124,92,252,.3)">馃摉 瀛︿範闃舵</span>
     </div>
     <div class="word-card" id="wordCard">
       <div class="card-head">
         <div class="word" id="cardWord"></div>
         <div class="phonetic" id="cardPhonetic"></div>
-        <button class="speak-btn" id="speakBtn" onclick="speakWord()" title="发音">🔊</button>
+        <button class="speak-btn" id="speakBtn" onclick="speakWord()" title="鍙戦煶">馃攰</button>
       </div>
       <div class="card-body">
         <div class="card-section">
-          <div class="card-section-label">中文释义</div>
+          <div class="card-section-label">涓枃閲婁箟</div>
           <div class="chinese" id="cardChinese"></div>
         </div>
         <div class="card-section">
-          <div class="card-section-label">Python 中的作用</div>
+          <div class="card-section-label">Python 涓殑浣滅敤</div>
           <div class="role" id="cardRole"></div>
         </div>
         <div class="card-section">
-          <div class="card-section-label">代码示例</div>
+          <div class="card-section-label">浠ｇ爜绀轰緥</div>
           <div class="example" id="cardExample"></div>
         </div>
       </div>
       <div class="spell-section">
-        <div class="label">✏️ 拼写练习</div>
+        <div class="label">鉁忥笍 鎷煎啓缁冧範</div>
         <div class="spell-row">
-          <input class="spell-input" id="spellInput" autocomplete="off" placeholder="输入单词…" onkeydown="if(event.key==='Enter')checkSpell()">
-          <button class="spell-check-btn" onclick="checkSpell()" title="确认">✓</button>
+          <input class="spell-input" id="spellInput" autocomplete="off" placeholder="杈撳叆鍗曡瘝鈥? onkeydown="if(event.key==='Enter')checkSpell()">
+          <button class="spell-check-btn" onclick="checkSpell()" title="纭">鉁?/button>
         </div>
         <div class="spell-result" id="spellResult"></div>
-        <button class="btn btn-sm btn-secondary" id="spellRetryBtn" onclick="retrySpell()" style="display:none;margin-top:8px;width:100%">🔁 再练一次</button>
+        <button class="btn btn-sm btn-secondary" id="spellRetryBtn" onclick="retrySpell()" style="display:none;margin-top:8px;width:100%">馃攣 鍐嶇粌涓€娆?/button>
       </div>
     </div>
     <div class="learn-actions">
-      <button class="btn btn-danger btn-sm" onclick="markWord(false)">不认识</button>
-      <button class="btn btn-primary btn-sm" onclick="markWord(true)">下一个 ✓</button>
+      <button class="btn btn-danger btn-sm" onclick="markWord(false)">涓嶈璇?/button>
+      <button class="btn btn-primary btn-sm" onclick="markWord(true)">涓嬩竴涓?鉁?/button>
     </div>
   </div>
 </div>
 
-<!-- ====== 听写测试页 ====== -->
+<!-- ====== 鍚啓娴嬭瘯椤?====== -->
 <div class="page" id="pageDictation">
   <div class="container">
     <div class="learn-top">
-      <h2 id="dictTitle">听写测试</h2>
+      <h2 id="dictTitle">鍚啓娴嬭瘯</h2>
       <span class="counter" id="dictCounter">0/0</span>
     </div>
     <div style="text-align:center;margin-bottom:12px">
-      <span style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(78,205,196,.15);color:var(--accent3);border:1px solid rgba(78,205,196,.3)">👂 听写阶段</span>
+      <span style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(78,205,196,.15);color:var(--accent3);border:1px solid rgba(78,205,196,.3)">馃憘 鍚啓闃舵</span>
     </div>
     <div class="word-card" id="dictCard">
       <div class="card-head" style="padding:28px 24px 12px">
-        <div style="font-size:13px;color:var(--text2);margin-bottom:8px">👂 听发音，根据 Python 作用写出单词</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px">馃憘 鍚彂闊筹紝鏍规嵁 Python 浣滅敤鍐欏嚭鍗曡瘝</div>
         <div class="role" id="dictHint" style="text-align:left;margin-top:12px"></div>
       </div>
       <div style="padding:4px 24px 16px;display:flex;align-items:center;gap:12px">
-        <button class="listen-play-btn" id="dictPlayBtn" onclick="playDict()" title="播放发音" style="width:52px;height:52px;font-size:24px">🔊</button>
-        <div style="font-size:12px;color:var(--text2);line-height:1.5">点击播放听发音<br>可重复播放</div>
+        <button class="listen-play-btn" id="dictPlayBtn" onclick="playDict()" title="鎾斁鍙戦煶" style="width:52px;height:52px;font-size:24px">馃攰</button>
+        <div style="font-size:12px;color:var(--text2);line-height:1.5">鐐瑰嚮鎾斁鍚彂闊?br>鍙噸澶嶆挱鏀?/div>
       </div>
       <div class="listen-section" style="border-top:1px solid rgba(255,255,255,.06);padding-top:16px">
-        <div class="label">写出你听到的单词</div>
+        <div class="label">鍐欏嚭浣犲惉鍒扮殑鍗曡瘝</div>
         <div class="listen-row">
-          <input class="listen-input" id="dictInput" autocomplete="off" placeholder="听音拼写…" onkeydown="if(event.key==='Enter')checkDict()">
-          <button class="listen-check-btn" onclick="checkDict()" title="确认">✓</button>
+          <input class="listen-input" id="dictInput" autocomplete="off" placeholder="鍚煶鎷煎啓鈥? onkeydown="if(event.key==='Enter')checkDict()">
+          <button class="listen-check-btn" onclick="checkDict()" title="纭">鉁?/button>
         </div>
         <div class="listen-result" id="dictResult"></div>
-        <button class="btn btn-sm btn-secondary" onclick="skipDict()" style="margin-top:10px;width:100%">⏭️ 跳过这题</button>
+        <button class="btn btn-sm btn-secondary" onclick="skipDict()" style="margin-top:10px;width:100%">鈴笍 璺宠繃杩欓</button>
       </div>
       <div id="dictReveal" style="display:none;padding:0 24px 24px">
         <div class="card-section" style="margin-bottom:0">
-          <div class="card-section-label">单词详情</div>
+          <div class="card-section-label">鍗曡瘝璇︽儏</div>
           <div style="font-size:28px;font-weight:900;letter-spacing:1px;margin:6px 0" id="dictRevealWord"></div>
           <div style="font-size:13px;color:var(--accent3)" id="dictRevealPhonetic"></div>
           <div style="font-size:16px;color:var(--accent3);margin-top:6px" id="dictRevealChinese"></div>
@@ -349,200 +349,200 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
       </div>
     </div>
     <div class="learn-actions" id="dictActions" style="display:none">
-      <button class="btn btn-primary btn-sm" onclick="nextDict()">下一题 →</button>
+      <button class="btn btn-primary btn-sm" onclick="nextDict()">涓嬩竴棰?鈫?/button>
     </div>
     <div id="dictSummary" style="display:none">
       <div style="text-align:center;padding:30px 0 20px">
-        <div style="font-size:48px;margin-bottom:10px" id="dictSummaryEmoji">🎉</div>
-        <div style="font-size:20px;font-weight:700" id="dictSummaryTitle">听写完成！</div>
+        <div style="font-size:48px;margin-bottom:10px" id="dictSummaryEmoji">馃帀</div>
+        <div style="font-size:20px;font-weight:700" id="dictSummaryTitle">鍚啓瀹屾垚锛?/div>
         <div style="font-size:14px;color:var(--text2);margin-top:6px" id="dictSummaryDesc"></div>
       </div>
       <div id="dictSummaryList" style="display:grid;gap:8px;margin-top:16px"></div>
       <div style="text-align:center;margin-top:24px;display:flex;gap:12px;justify-content:center">
-        <button class="btn btn-secondary btn-sm" onclick="switchPage('pageHome')">返回地图</button>
-        <button class="btn btn-primary btn-sm" onclick="retryDictation()">再来一次</button>
+        <button class="btn btn-secondary btn-sm" onclick="switchPage('pageHome')">杩斿洖鍦板浘</button>
+        <button class="btn btn-primary btn-sm" onclick="retryDictation()">鍐嶆潵涓€娆?/button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ====== 复习页 ====== -->
+<!-- ====== 澶嶄範椤?====== -->
 <div class="page" id="pageReview">
   <div class="container">
-    <h2 style="font-size:20px;font-weight:700;margin-bottom:16px">📖 错题本</h2>
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:16px">馃摉 閿欓鏈?/h2>
     <div id="reviewContent"></div>
   </div>
 </div>
 
-<!-- ====== 个人中心 ====== -->
+<!-- ====== 涓汉涓績 ====== -->
 <div class="page" id="pageProfile">
   <div class="container">
     <div class="profile-header">
-      <div class="profile-avatar" id="profileAvatar">🐍</div>
-      <div class="profile-name" id="profileName">学习者</div>
+      <div class="profile-avatar" id="profileAvatar">馃悕</div>
+      <div class="profile-name" id="profileName">瀛︿範鑰?/div>
       <div class="profile-level" id="profileLevel">Lv.1</div>
     </div>
     <div class="stats-row" id="profileStats"></div>
     <div class="daily-task" id="dailyTasks"></div>
-    <h3 style="font-size:15px;font-weight:700;margin:20px 0 10px">🏅 成就徽章</h3>
+    <h3 style="font-size:15px;font-weight:700;margin:20px 0 10px">馃弲 鎴愬氨寰界珷</h3>
     <div class="badge-grid" id="badgeGrid"></div>
   </div>
 </div>
 
 <div class="navbar" id="mainNavbar" style="display:none">
-  <div class="nav-item active" onclick="switchPage('pageHome',this)"><span class="icon">🗺️</span>地图</div>
-  <div class="nav-item" onclick="switchPage('pageLearn',this)"><span class="icon">📚</span>学习</div>
-  <div class="nav-item" onclick="switchPage('pageReview',this)"><span class="icon">📖</span>复习</div>
-  <div class="nav-item" onclick="switchPage('pageProfile',this)"><span class="icon">👤</span>我的</div>
+  <div class="nav-item active" onclick="switchPage('pageHome',this)"><span class="icon">馃椇锔?/span>鍦板浘</div>
+  <div class="nav-item" onclick="switchPage('pageLearn',this)"><span class="icon">馃摎</span>瀛︿範</div>
+  <div class="nav-item" onclick="switchPage('pageReview',this)"><span class="icon">馃摉</span>澶嶄範</div>
+  <div class="nav-item" onclick="switchPage('pageProfile',this)"><span class="icon">馃懁</span>鎴戠殑</div>
 </div>
 
 <script>
-// ====== Supabase 配置 ======
+// ====== Supabase 閰嶇疆 ======
 const SUPABASE_URL = 'https://urugaofhgpedggntvdfl.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVydWdhb2ZoZ3BlZGdnbnR2ZGZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyODE2NzQsImV4cCI6MjA5Mzg1NzY3NH0.DsVooQsz-FgV1h1PKYLI791LqUjrSxkQjZbIr4eTbFM';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ====== 词库数据 ======
+// ====== 璇嶅簱鏁版嵁 ======
 const VOCAB=[
-  {id:"level-1",name:"Hello Python",icon:"🟢",unlockScore:0,desc:"第一天写代码就会遇到的词",words:[
-    {word:"print",phonetic:"/prɪnt/",chinese:"打印；输出",pythonRole:"内置函数，将内容输出到控制台",pythonExample:"print('Hello, World!')"},
-    {word:"run",phonetic:"/rʌn/",chinese:"运行",pythonRole:"执行 Python 脚本",pythonExample:"python script.py"},
-    {word:"string",phonetic:"/strɪŋ/",chinese:"字符串",pythonRole:"文本数据类型，用引号包裹",pythonExample:"name = 'Alice'"},
-    {word:"integer",phonetic:"/ˈɪntɪdʒər/",chinese:"整数",pythonRole:"没有小数点的数字",pythonExample:"count = 42"},
-    {word:"float",phonetic:"/fləʊt/",chinese:"浮点数",pythonRole:"带小数点的数字",pythonExample:"price = 3.14"},
-    {word:"variable",phonetic:"/ˈveriəbl/",chinese:"变量",pythonRole:"存储数据的命名容器",pythonExample:"age = 25"},
-    {word:"assign",phonetic:"/əˈsaɪn/",chinese:"赋值",pythonRole:"把值绑定到变量",pythonExample:"x = 10"},
-    {word:"input",phonetic:"/ˈɪnpʊt/",chinese:"输入",pythonRole:"从控制台读取用户输入",pythonExample:"name = input('你的名字: ')"},
-    {word:"comment",phonetic:"/ˈkɒment/",chinese:"注释",pythonRole:"代码中不被执行的说明文字",pythonExample:"# 这是一行注释"},
-    {word:"type",phonetic:"/taɪp/",chinese:"类型",pythonRole:"查看数据属于什么类型",pythonExample:"type(42)  # <class 'int'>"},
-    {word:"error",phonetic:"/ˈerər/",chinese:"错误",pythonRole:"程序运行时的报错",pythonExample:"# TypeError: unsupported operand"},
-    {word:"True",phonetic:"/truː/",chinese:"真",pythonRole:"布尔值，表示成立",pythonExample:"is_student = True"},
-    {word:"code",phonetic:"/kəʊd/",chinese:"代码",pythonRole:"程序员写的指令集合",pythonExample:"# 这是一段 Python code"},
-    {word:"output",phonetic:"/ˈaʊtpʊt/",chinese:"输出",pythonRole:"程序产生的结果",pythonExample:"print('output')"},
-    {word:"console",phonetic:"/ˈkɒnsəʊl/",chinese:"控制台",pythonRole:"显示程序输出的终端窗口",pythonExample:"# 在 console 中查看结果"},
-    {word:"syntax",phonetic:"/ˈsɪntæks/",chinese:"语法",pythonRole:"代码的书写规则",pythonExample:"# SyntaxError: 语法错误"},
-    {word:"execute",phonetic:"/ˈeksɪkjuːt/",chinese:"执行",pythonRole:"运行代码",pythonExample:"# 按 F5 执行程序"},
-    {word:"debug",phonetic:"/diːˈbʌɡ/",chinese:"调试",pythonRole:"查找并修复代码错误",pythonExample:"# 使用 debugger 调试代码"},
-    {word:"script",phonetic:"/skrɪpt/",chinese:"脚本",pythonRole:"可执行的程序文件",pythonExample:"python my_script.py"}
+  {id:"level-1",name:"Hello Python",icon:"馃煝",unlockScore:0,desc:"绗竴澶╁啓浠ｇ爜灏变細閬囧埌鐨勮瘝",words:[
+    {word:"print",phonetic:"/pr瑟nt/",chinese:"鎵撳嵃锛涜緭鍑?,pythonRole:"鍐呯疆鍑芥暟锛屽皢鍐呭杈撳嚭鍒版帶鍒跺彴",pythonExample:"print('Hello, World!')"},
+    {word:"run",phonetic:"/r蕦n/",chinese:"杩愯",pythonRole:"鎵ц Python 鑴氭湰",pythonExample:"python script.py"},
+    {word:"string",phonetic:"/str瑟艐/",chinese:"瀛楃涓?,pythonRole:"鏂囨湰鏁版嵁绫诲瀷锛岀敤寮曞彿鍖呰９",pythonExample:"name = 'Alice'"},
+    {word:"integer",phonetic:"/藞瑟nt瑟d蕭蓹r/",chinese:"鏁存暟",pythonRole:"娌℃湁灏忔暟鐐圭殑鏁板瓧",pythonExample:"count = 42"},
+    {word:"float",phonetic:"/fl蓹蕣t/",chinese:"娴偣鏁?,pythonRole:"甯﹀皬鏁扮偣鐨勬暟瀛?,pythonExample:"price = 3.14"},
+    {word:"variable",phonetic:"/藞veri蓹bl/",chinese:"鍙橀噺",pythonRole:"瀛樺偍鏁版嵁鐨勫懡鍚嶅鍣?,pythonExample:"age = 25"},
+    {word:"assign",phonetic:"/蓹藞sa瑟n/",chinese:"璧嬪€?,pythonRole:"鎶婂€肩粦瀹氬埌鍙橀噺",pythonExample:"x = 10"},
+    {word:"input",phonetic:"/藞瑟np蕣t/",chinese:"杈撳叆",pythonRole:"浠庢帶鍒跺彴璇诲彇鐢ㄦ埛杈撳叆",pythonExample:"name = input('浣犵殑鍚嶅瓧: ')"},
+    {word:"comment",phonetic:"/藞k蓲ment/",chinese:"娉ㄩ噴",pythonRole:"浠ｇ爜涓笉琚墽琛岀殑璇存槑鏂囧瓧",pythonExample:"# 杩欐槸涓€琛屾敞閲?},
+    {word:"type",phonetic:"/ta瑟p/",chinese:"绫诲瀷",pythonRole:"鏌ョ湅鏁版嵁灞炰簬浠€涔堢被鍨?,pythonExample:"type(42)  # <class 'int'>"},
+    {word:"error",phonetic:"/藞er蓹r/",chinese:"閿欒",pythonRole:"绋嬪簭杩愯鏃剁殑鎶ラ敊",pythonExample:"# TypeError: unsupported operand"},
+    {word:"True",phonetic:"/tru藧/",chinese:"鐪?,pythonRole:"甯冨皵鍊硷紝琛ㄧず鎴愮珛",pythonExample:"is_student = True"},
+    {word:"code",phonetic:"/k蓹蕣d/",chinese:"浠ｇ爜",pythonRole:"绋嬪簭鍛樺啓鐨勬寚浠ら泦鍚?,pythonExample:"# 杩欐槸涓€娈?Python code"},
+    {word:"output",phonetic:"/藞a蕣tp蕣t/",chinese:"杈撳嚭",pythonRole:"绋嬪簭浜х敓鐨勭粨鏋?,pythonExample:"print('output')"},
+    {word:"console",phonetic:"/藞k蓲ns蓹蕣l/",chinese:"鎺у埗鍙?,pythonRole:"鏄剧ず绋嬪簭杈撳嚭鐨勭粓绔獥鍙?,pythonExample:"# 鍦?console 涓煡鐪嬬粨鏋?},
+    {word:"syntax",phonetic:"/藞s瑟nt忙ks/",chinese:"璇硶",pythonRole:"浠ｇ爜鐨勪功鍐欒鍒?,pythonExample:"# SyntaxError: 璇硶閿欒"},
+    {word:"execute",phonetic:"/藞eks瑟kju藧t/",chinese:"鎵ц",pythonRole:"杩愯浠ｇ爜",pythonExample:"# 鎸?F5 鎵ц绋嬪簭"},
+    {word:"debug",phonetic:"/di藧藞b蕦伞/",chinese:"璋冭瘯",pythonRole:"鏌ユ壘骞朵慨澶嶄唬鐮侀敊璇?,pythonExample:"# 浣跨敤 debugger 璋冭瘯浠ｇ爜"},
+    {word:"script",phonetic:"/skr瑟pt/",chinese:"鑴氭湰",pythonRole:"鍙墽琛岀殑绋嬪簭鏂囦欢",pythonExample:"python my_script.py"}
   ]},
-  {id:"level-2",name:"判断与循环",icon:"🔄",unlockScore:60,desc:"让程序会思考、会重复",words:[
-    {word:"if",phonetic:"/ɪf/",chinese:"如果",pythonRole:"条件判断，满足则执行",pythonExample:"if age >= 18:\n    print('成年了')"},
-    {word:"else",phonetic:"/els/",chinese:"否则",pythonRole:"条件不满足时执行的分支",pythonExample:"if score >= 60:\n    print('及格')\nelse:\n    print('不及格')"},
-    {word:"elif",phonetic:"/ˈelɪf/",chinese:"否则如果",pythonRole:"多条件判断的中间分支",pythonExample:"if score >= 90:\n    print('优秀')\nelif score >= 60:\n    print('及格')"},
-    {word:"for",phonetic:"/fɔːr/",chinese:"循环",pythonRole:"遍历序列中每个元素",pythonExample:"for i in range(5):\n    print(i)"},
-    {word:"while",phonetic:"/waɪl/",chinese:"当…时循环",pythonRole:"条件为真时一直重复",pythonExample:"while count > 0:\n    count -= 1"},
-    {word:"range",phonetic:"/reɪndʒ/",chinese:"范围",pythonRole:"生成一串连续整数",pythonExample:"list(range(5))  # [0,1,2,3,4]"},
-    {word:"break",phonetic:"/breɪk/",chinese:"跳出",pythonRole:"立即退出当前循环",pythonExample:"for i in range(10):\n    if i == 5: break"},
-    {word:"continue",phonetic:"/kənˈtɪnjuː/",chinese:"继续",pythonRole:"跳过这一轮，进入下一轮",pythonExample:"for i in range(5):\n    if i == 2: continue"},
-    {word:"in",phonetic:"/ɪn/",chinese:"在…中",pythonRole:"判断元素是否属于序列",pythonExample:"3 in [1,2,3]  # True"},
-    {word:"boolean",phonetic:"/ˈbuːliən/",chinese:"布尔值",pythonRole:"只有 True 或 False",pythonExample:"is_valid = True"},
-    {word:"False",phonetic:"/fɔːls/",chinese:"假",pythonRole:"布尔值，表示不成立",pythonExample:"is_empty = False"},
-    {word:"None",phonetic:"/nʌn/",chinese:"空值",pythonRole:"Python 里的「什么都没有」",pythonExample:"result = None"},
-    {word:"condition",phonetic:"/kənˈdɪʃn/",chinese:"条件",pythonRole:"if/while 后面的判断表达式",pythonExample:"if condition:\n    pass"},
-    {word:"loop",phonetic:"/luːp/",chinese:"循环",pythonRole:"重复执行一段代码",pythonExample:"# for 和 while 都是 loop"},
-    {word:"iterate",phonetic:"/ˈɪtəreɪt/",chinese:"迭代",pythonRole:"逐个访问序列中的元素",pythonExample:"for item in items:\n    # 迭代每个 item"},
-    {word:"nested",phonetic:"/ˈnestɪd/",chinese:"嵌套",pythonRole:"一个结构内部包含同类结构",pythonExample:"# 嵌套循环\nfor i in range(3):\n    for j in range(3):"},
-    {word:"skip",phonetic:"/skɪp/",chinese:"跳过",pythonRole:"continue 的同义词",pythonExample:"# skip this iteration"},
-    {word:"exit",phonetic:"/ˈeksɪt/",chinese:"退出",pythonRole:"break 或结束程序",pythonExample:"# exit the loop"},
-    {word:"branch",phonetic:"/brɑːntʃ/",chinese:"分支",pythonRole:"条件判断的不同路径",pythonExample:"# if-else 创建两个 branch"}
+  {id:"level-2",name:"鍒ゆ柇涓庡惊鐜?,icon:"馃攧",unlockScore:60,desc:"璁╃▼搴忎細鎬濊€冦€佷細閲嶅",words:[
+    {word:"if",phonetic:"/瑟f/",chinese:"濡傛灉",pythonRole:"鏉′欢鍒ゆ柇锛屾弧瓒冲垯鎵ц",pythonExample:"if age >= 18:\n    print('鎴愬勾浜?)"},
+    {word:"else",phonetic:"/els/",chinese:"鍚﹀垯",pythonRole:"鏉′欢涓嶆弧瓒虫椂鎵ц鐨勫垎鏀?,pythonExample:"if score >= 60:\n    print('鍙婃牸')\nelse:\n    print('涓嶅強鏍?)"},
+    {word:"elif",phonetic:"/藞el瑟f/",chinese:"鍚﹀垯濡傛灉",pythonRole:"澶氭潯浠跺垽鏂殑涓棿鍒嗘敮",pythonExample:"if score >= 90:\n    print('浼樼')\nelif score >= 60:\n    print('鍙婃牸')"},
+    {word:"for",phonetic:"/f蓴藧r/",chinese:"寰幆",pythonRole:"閬嶅巻搴忓垪涓瘡涓厓绱?,pythonExample:"for i in range(5):\n    print(i)"},
+    {word:"while",phonetic:"/wa瑟l/",chinese:"褰撯€︽椂寰幆",pythonRole:"鏉′欢涓虹湡鏃朵竴鐩撮噸澶?,pythonExample:"while count > 0:\n    count -= 1"},
+    {word:"range",phonetic:"/re瑟nd蕭/",chinese:"鑼冨洿",pythonRole:"鐢熸垚涓€涓茶繛缁暣鏁?,pythonExample:"list(range(5))  # [0,1,2,3,4]"},
+    {word:"break",phonetic:"/bre瑟k/",chinese:"璺冲嚭",pythonRole:"绔嬪嵆閫€鍑哄綋鍓嶅惊鐜?,pythonExample:"for i in range(10):\n    if i == 5: break"},
+    {word:"continue",phonetic:"/k蓹n藞t瑟nju藧/",chinese:"缁х画",pythonRole:"璺宠繃杩欎竴杞紝杩涘叆涓嬩竴杞?,pythonExample:"for i in range(5):\n    if i == 2: continue"},
+    {word:"in",phonetic:"/瑟n/",chinese:"鍦ㄢ€︿腑",pythonRole:"鍒ゆ柇鍏冪礌鏄惁灞炰簬搴忓垪",pythonExample:"3 in [1,2,3]  # True"},
+    {word:"boolean",phonetic:"/藞bu藧li蓹n/",chinese:"甯冨皵鍊?,pythonRole:"鍙湁 True 鎴?False",pythonExample:"is_valid = True"},
+    {word:"False",phonetic:"/f蓴藧ls/",chinese:"鍋?,pythonRole:"甯冨皵鍊硷紝琛ㄧず涓嶆垚绔?,pythonExample:"is_empty = False"},
+    {word:"None",phonetic:"/n蕦n/",chinese:"绌哄€?,pythonRole:"Python 閲岀殑銆屼粈涔堥兘娌℃湁銆?,pythonExample:"result = None"},
+    {word:"condition",phonetic:"/k蓹n藞d瑟蕛n/",chinese:"鏉′欢",pythonRole:"if/while 鍚庨潰鐨勫垽鏂〃杈惧紡",pythonExample:"if condition:\n    pass"},
+    {word:"loop",phonetic:"/lu藧p/",chinese:"寰幆",pythonRole:"閲嶅鎵ц涓€娈典唬鐮?,pythonExample:"# for 鍜?while 閮芥槸 loop"},
+    {word:"iterate",phonetic:"/藞瑟t蓹re瑟t/",chinese:"杩唬",pythonRole:"閫愪釜璁块棶搴忓垪涓殑鍏冪礌",pythonExample:"for item in items:\n    # 杩唬姣忎釜 item"},
+    {word:"nested",phonetic:"/藞nest瑟d/",chinese:"宓屽",pythonRole:"涓€涓粨鏋勫唴閮ㄥ寘鍚悓绫荤粨鏋?,pythonExample:"# 宓屽寰幆\nfor i in range(3):\n    for j in range(3):"},
+    {word:"skip",phonetic:"/sk瑟p/",chinese:"璺宠繃",pythonRole:"continue 鐨勫悓涔夎瘝",pythonExample:"# skip this iteration"},
+    {word:"exit",phonetic:"/藞eks瑟t/",chinese:"閫€鍑?,pythonRole:"break 鎴栫粨鏉熺▼搴?,pythonExample:"# exit the loop"},
+    {word:"branch",phonetic:"/br蓱藧nt蕛/",chinese:"鍒嗘敮",pythonRole:"鏉′欢鍒ゆ柇鐨勪笉鍚岃矾寰?,pythonExample:"# if-else 鍒涘缓涓や釜 branch"}
   ]},
-  {id:"level-3",name:"数据容器",icon:"📦",unlockScore:150,desc:"用列表、字典装更多数据",words:[
-    {word:"list",phonetic:"/lɪst/",chinese:"列表",pythonRole:"有序可变的元素集合",pythonExample:"fruits = ['apple','banana','cherry']"},
-    {word:"dictionary",phonetic:"/ˈdɪkʃəneri/",chinese:"字典",pythonRole:"键值对，用名字找数据",pythonExample:"student = {'name':'Bob','age':20}"},
-    {word:"tuple",phonetic:"/ˈtʌpl/",chinese:"元组",pythonRole:"有序但不可改的集合",pythonExample:"point = (3, 4)"},
-    {word:"set",phonetic:"/set/",chinese:"集合",pythonRole:"不重复的元素集合",pythonExample:"unique = {1, 2, 3, 3}  # {1,2,3}"},
-    {word:"len",phonetic:"/len/",chinese:"长度",pythonRole:"数一数有多少个元素",pythonExample:"len([1,2,3])  # 3"},
-    {word:"append",phonetic:"/əˈpend/",chinese:"追加",pythonRole:"在列表末尾加一个元素",pythonExample:"fruits = ['apple']\nfruits.append('banana')"},
-    {word:"sort",phonetic:"/sɔːrt/",chinese:"排序",pythonRole:"把列表从小到大排好",pythonExample:"nums = [3,1,2]\nnums.sort()  # [1,2,3]"},
-    {word:"split",phonetic:"/splɪt/",chinese:"分割",pythonRole:"把字符串拆成列表",pythonExample:"'a,b,c'.split(',')  # ['a','b','c']"},
-    {word:"join",phonetic:"/dʒɔɪn/",chinese:"连接",pythonRole:"把列表拼成字符串",pythonExample:"','.join(['a','b','c'])  # 'a,b,c'"},
-    {word:"key",phonetic:"/kiː/",chinese:"键",pythonRole:"字典中用来查找数据的名字",pythonExample:"student['name']  # 'Bob'"},
-    {word:"value",phonetic:"/ˈvæljuː/",chinese:"值",pythonRole:"字典中键对应的数据",pythonExample:"student['age']  # 20"},
-    {word:"index",phonetic:"/ˈɪndeks/",chinese:"索引",pythonRole:"元素在列表中的位置编号（从0开始）",pythonExample:"fruits[0]  # 'apple'"},
-    {word:"element",phonetic:"/ˈelɪmənt/",chinese:"元素",pythonRole:"容器中的一个数据项",pythonExample:"# 列表中的每个 element"},
-    {word:"slice",phonetic:"/slaɪs/",chinese:"切片",pythonRole:"截取序列的一部分",pythonExample:"nums[1:4]  # 切片取第2到4个"},
-    {word:"insert",phonetic:"/ɪnˈsɜːrt/",chinese:"插入",pythonRole:"在指定位置添加元素",pythonExample:"nums.insert(0, 100)  # 在开头插入"},
-    {word:"remove",phonetic:"/rɪˈmuːv/",chinese:"移除",pythonRole:"删除指定值的元素",pythonExample:"nums.remove(5)  # 删除值为5的元素"},
-    {word:"pop",phonetic:"/pɒp/",chinese:"弹出",pythonRole:"删除并返回最后一个元素",pythonExample:"last = nums.pop()"},
-    {word:"extend",phonetic:"/ɪkˈstend/",chinese:"扩展",pythonRole:"合并另一个列表",pythonExample:"list1.extend(list2)"},
-    {word:"copy",phonetic:"/ˈkɒpi/",chinese:"复制",pythonRole:"创建容器的副本",pythonExample:"new_list = old_list.copy()"}
+  {id:"level-3",name:"鏁版嵁瀹瑰櫒",icon:"馃摝",unlockScore:150,desc:"鐢ㄥ垪琛ㄣ€佸瓧鍏歌鏇村鏁版嵁",words:[
+    {word:"list",phonetic:"/l瑟st/",chinese:"鍒楄〃",pythonRole:"鏈夊簭鍙彉鐨勫厓绱犻泦鍚?,pythonExample:"fruits = ['apple','banana','cherry']"},
+    {word:"dictionary",phonetic:"/藞d瑟k蕛蓹neri/",chinese:"瀛楀吀",pythonRole:"閿€煎锛岀敤鍚嶅瓧鎵炬暟鎹?,pythonExample:"student = {'name':'Bob','age':20}"},
+    {word:"tuple",phonetic:"/藞t蕦pl/",chinese:"鍏冪粍",pythonRole:"鏈夊簭浣嗕笉鍙敼鐨勯泦鍚?,pythonExample:"point = (3, 4)"},
+    {word:"set",phonetic:"/set/",chinese:"闆嗗悎",pythonRole:"涓嶉噸澶嶇殑鍏冪礌闆嗗悎",pythonExample:"unique = {1, 2, 3, 3}  # {1,2,3}"},
+    {word:"len",phonetic:"/len/",chinese:"闀垮害",pythonRole:"鏁颁竴鏁版湁澶氬皯涓厓绱?,pythonExample:"len([1,2,3])  # 3"},
+    {word:"append",phonetic:"/蓹藞pend/",chinese:"杩藉姞",pythonRole:"鍦ㄥ垪琛ㄦ湯灏惧姞涓€涓厓绱?,pythonExample:"fruits = ['apple']\nfruits.append('banana')"},
+    {word:"sort",phonetic:"/s蓴藧rt/",chinese:"鎺掑簭",pythonRole:"鎶婂垪琛ㄤ粠灏忓埌澶ф帓濂?,pythonExample:"nums = [3,1,2]\nnums.sort()  # [1,2,3]"},
+    {word:"split",phonetic:"/spl瑟t/",chinese:"鍒嗗壊",pythonRole:"鎶婂瓧绗︿覆鎷嗘垚鍒楄〃",pythonExample:"'a,b,c'.split(',')  # ['a','b','c']"},
+    {word:"join",phonetic:"/d蕭蓴瑟n/",chinese:"杩炴帴",pythonRole:"鎶婂垪琛ㄦ嫾鎴愬瓧绗︿覆",pythonExample:"','.join(['a','b','c'])  # 'a,b,c'"},
+    {word:"key",phonetic:"/ki藧/",chinese:"閿?,pythonRole:"瀛楀吀涓敤鏉ユ煡鎵炬暟鎹殑鍚嶅瓧",pythonExample:"student['name']  # 'Bob'"},
+    {word:"value",phonetic:"/藞v忙lju藧/",chinese:"鍊?,pythonRole:"瀛楀吀涓敭瀵瑰簲鐨勬暟鎹?,pythonExample:"student['age']  # 20"},
+    {word:"index",phonetic:"/藞瑟ndeks/",chinese:"绱㈠紩",pythonRole:"鍏冪礌鍦ㄥ垪琛ㄤ腑鐨勪綅缃紪鍙凤紙浠?寮€濮嬶級",pythonExample:"fruits[0]  # 'apple'"},
+    {word:"element",phonetic:"/藞el瑟m蓹nt/",chinese:"鍏冪礌",pythonRole:"瀹瑰櫒涓殑涓€涓暟鎹」",pythonExample:"# 鍒楄〃涓殑姣忎釜 element"},
+    {word:"slice",phonetic:"/sla瑟s/",chinese:"鍒囩墖",pythonRole:"鎴彇搴忓垪鐨勪竴閮ㄥ垎",pythonExample:"nums[1:4]  # 鍒囩墖鍙栫2鍒?涓?},
+    {word:"insert",phonetic:"/瑟n藞s蓽藧rt/",chinese:"鎻掑叆",pythonRole:"鍦ㄦ寚瀹氫綅缃坊鍔犲厓绱?,pythonExample:"nums.insert(0, 100)  # 鍦ㄥ紑澶存彃鍏?},
+    {word:"remove",phonetic:"/r瑟藞mu藧v/",chinese:"绉婚櫎",pythonRole:"鍒犻櫎鎸囧畾鍊肩殑鍏冪礌",pythonExample:"nums.remove(5)  # 鍒犻櫎鍊间负5鐨勫厓绱?},
+    {word:"pop",phonetic:"/p蓲p/",chinese:"寮瑰嚭",pythonRole:"鍒犻櫎骞惰繑鍥炴渶鍚庝竴涓厓绱?,pythonExample:"last = nums.pop()"},
+    {word:"extend",phonetic:"/瑟k藞stend/",chinese:"鎵╁睍",pythonRole:"鍚堝苟鍙︿竴涓垪琛?,pythonExample:"list1.extend(list2)"},
+    {word:"copy",phonetic:"/藞k蓲pi/",chinese:"澶嶅埗",pythonRole:"鍒涘缓瀹瑰櫒鐨勫壇鏈?,pythonExample:"new_list = old_list.copy()"}
   ]},
-  {id:"level-4",name:"函数与复用",icon:"🧩",unlockScore:260,desc:"把重复代码包成函数",words:[
-    {word:"def",phonetic:"/def/",chinese:"定义",pythonRole:"定义一个函数",pythonExample:"def greet(name):\n    print(f'Hello, {name}!')"},
-    {word:"return",phonetic:"/rɪˈtɜːrn/",chinese:"返回",pythonRole:"函数执行完给回结果",pythonExample:"def add(a, b):\n    return a + b"},
-    {word:"argument",phonetic:"/ˈɑːrɡjʊmənt/",chinese:"实参",pythonRole:"调用函数时传进去的值",pythonExample:"greet('Alice')  # 'Alice'是实参"},
-    {word:"parameter",phonetic:"/pəˈræmɪtər/",chinese:"形参",pythonRole:"函数定义里的占位变量",pythonExample:"def add(a, b):  # a, b是形参"},
-    {word:"default",phonetic:"/dɪˈfɔːlt/",chinese:"默认值",pythonRole:"不传参时自动用的值",pythonExample:"def greet(name='World'):\n    print(f'Hello, {name}!')"},
-    {word:"import",phonetic:"/ˈɪmpɔːrt/",chinese:"导入",pythonRole:"引入别人写好的模块",pythonExample:"import math"},
-    {word:"module",phonetic:"/ˈmɒdjuːl/",chinese:"模块",pythonRole:"一个 .py 文件就是一个模块",pythonExample:"import random"},
-    {word:"package",phonetic:"/ˈpækɪdʒ/",chinese:"包",pythonRole:"装了多个模块的文件夹",pythonExample:"import numpy"},
-    {word:"strip",phonetic:"/strɪp/",chinese:"去除空白",pythonRole:"去掉字符串首尾空格",pythonExample:"'  hello  '.strip()  # 'hello'"},
-    {word:"replace",phonetic:"/rɪˈpleɪs/",chinese:"替换",pythonRole:"替换字符串中的内容",pythonExample:"'hello'.replace('l','r')  # 'herro'"},
-    {word:"reverse",phonetic:"/rɪˈvɜːrs/",chinese:"反转",pythonRole:"把列表倒过来",pythonExample:"nums = [1,2,3]\nnums.reverse()  # [3,2,1]"},
-    {word:"pass",phonetic:"/pɑːs/",chinese:"占位",pythonRole:"什么都不做，先占个位",pythonExample:"def todo():\n    pass  # 以后再写"},
-    {word:"function",phonetic:"/ˈfʌŋkʃn/",chinese:"函数",pythonRole:"可重复使用的代码块",pythonExample:"# def 定义一个 function"},
-    {word:"call",phonetic:"/kɔːl/",chinese:"调用",pythonRole:"执行一个函数",pythonExample:"greet('Bob')  # 调用 greet 函数"},
-    {word:"invoke",phonetic:"/ɪnˈvəʊk/",chinese:"调用",pythonRole:"call 的同义词",pythonExample:"# invoke the function"},
-    {word:"local",phonetic:"/ˈləʊkl/",chinese:"局部的",pythonRole:"只在函数内部有效",pythonExample:"# local variable 局部变量"},
-    {word:"recursive",phonetic:"/rɪˈkɜːrsɪv/",chinese:"递归",pythonRole:"函数调用自己",pythonExample:"def factorial(n):\n    if n<=1: return 1\n    return n * factorial(n-1)"},
-    {word:"callback",phonetic:"/ˈkɔːlbæk/",chinese:"回调",pythonRole:"作为参数传入的函数",pythonExample:"# 事件处理常用 callback"},
-    {word:"library",phonetic:"/ˈlaɪbrəri/",chinese:"库",pythonRole:"别人写好的代码集合",pythonExample:"import numpy  # 导入库"}
+  {id:"level-4",name:"鍑芥暟涓庡鐢?,icon:"馃З",unlockScore:260,desc:"鎶婇噸澶嶄唬鐮佸寘鎴愬嚱鏁?,words:[
+    {word:"def",phonetic:"/def/",chinese:"瀹氫箟",pythonRole:"瀹氫箟涓€涓嚱鏁?,pythonExample:"def greet(name):\n    print(f'Hello, {name}!')"},
+    {word:"return",phonetic:"/r瑟藞t蓽藧rn/",chinese:"杩斿洖",pythonRole:"鍑芥暟鎵ц瀹岀粰鍥炵粨鏋?,pythonExample:"def add(a, b):\n    return a + b"},
+    {word:"argument",phonetic:"/藞蓱藧r伞j蕣m蓹nt/",chinese:"瀹炲弬",pythonRole:"璋冪敤鍑芥暟鏃朵紶杩涘幓鐨勫€?,pythonExample:"greet('Alice')  # 'Alice'鏄疄鍙?},
+    {word:"parameter",phonetic:"/p蓹藞r忙m瑟t蓹r/",chinese:"褰㈠弬",pythonRole:"鍑芥暟瀹氫箟閲岀殑鍗犱綅鍙橀噺",pythonExample:"def add(a, b):  # a, b鏄舰鍙?},
+    {word:"default",phonetic:"/d瑟藞f蓴藧lt/",chinese:"榛樿鍊?,pythonRole:"涓嶄紶鍙傛椂鑷姩鐢ㄧ殑鍊?,pythonExample:"def greet(name='World'):\n    print(f'Hello, {name}!')"},
+    {word:"import",phonetic:"/藞瑟mp蓴藧rt/",chinese:"瀵煎叆",pythonRole:"寮曞叆鍒汉鍐欏ソ鐨勬ā鍧?,pythonExample:"import math"},
+    {word:"module",phonetic:"/藞m蓲dju藧l/",chinese:"妯″潡",pythonRole:"涓€涓?.py 鏂囦欢灏辨槸涓€涓ā鍧?,pythonExample:"import random"},
+    {word:"package",phonetic:"/藞p忙k瑟d蕭/",chinese:"鍖?,pythonRole:"瑁呬簡澶氫釜妯″潡鐨勬枃浠跺す",pythonExample:"import numpy"},
+    {word:"strip",phonetic:"/str瑟p/",chinese:"鍘婚櫎绌虹櫧",pythonRole:"鍘绘帀瀛楃涓查灏剧┖鏍?,pythonExample:"'  hello  '.strip()  # 'hello'"},
+    {word:"replace",phonetic:"/r瑟藞ple瑟s/",chinese:"鏇挎崲",pythonRole:"鏇挎崲瀛楃涓蹭腑鐨勫唴瀹?,pythonExample:"'hello'.replace('l','r')  # 'herro'"},
+    {word:"reverse",phonetic:"/r瑟藞v蓽藧rs/",chinese:"鍙嶈浆",pythonRole:"鎶婂垪琛ㄥ€掕繃鏉?,pythonExample:"nums = [1,2,3]\nnums.reverse()  # [3,2,1]"},
+    {word:"pass",phonetic:"/p蓱藧s/",chinese:"鍗犱綅",pythonRole:"浠€涔堥兘涓嶅仛锛屽厛鍗犱釜浣?,pythonExample:"def todo():\n    pass  # 浠ュ悗鍐嶅啓"},
+    {word:"function",phonetic:"/藞f蕦艐k蕛n/",chinese:"鍑芥暟",pythonRole:"鍙噸澶嶄娇鐢ㄧ殑浠ｇ爜鍧?,pythonExample:"# def 瀹氫箟涓€涓?function"},
+    {word:"call",phonetic:"/k蓴藧l/",chinese:"璋冪敤",pythonRole:"鎵ц涓€涓嚱鏁?,pythonExample:"greet('Bob')  # 璋冪敤 greet 鍑芥暟"},
+    {word:"invoke",phonetic:"/瑟n藞v蓹蕣k/",chinese:"璋冪敤",pythonRole:"call 鐨勫悓涔夎瘝",pythonExample:"# invoke the function"},
+    {word:"local",phonetic:"/藞l蓹蕣kl/",chinese:"灞€閮ㄧ殑",pythonRole:"鍙湪鍑芥暟鍐呴儴鏈夋晥",pythonExample:"# local variable 灞€閮ㄥ彉閲?},
+    {word:"recursive",phonetic:"/r瑟藞k蓽藧rs瑟v/",chinese:"閫掑綊",pythonRole:"鍑芥暟璋冪敤鑷繁",pythonExample:"def factorial(n):\n    if n<=1: return 1\n    return n * factorial(n-1)"},
+    {word:"callback",phonetic:"/藞k蓴藧lb忙k/",chinese:"鍥炶皟",pythonRole:"浣滀负鍙傛暟浼犲叆鐨勫嚱鏁?,pythonExample:"# 浜嬩欢澶勭悊甯哥敤 callback"},
+    {word:"library",phonetic:"/藞la瑟br蓹ri/",chinese:"搴?,pythonRole:"鍒汉鍐欏ソ鐨勪唬鐮侀泦鍚?,pythonExample:"import numpy  # 瀵煎叆搴?}
   ]},
-  {id:"level-5",name:"运算与逻辑",icon:"⚙️",unlockScore:380,desc:"让程序做数学和逻辑判断",words:[
-    {word:"add",phonetic:"/æd/",chinese:"加",pythonRole:"加法运算符 +",pythonExample:"total = 3 + 5  # 8"},
-    {word:"subtract",phonetic:"/səbˈtrækt/",chinese:"减",pythonRole:"减法运算符 -",pythonExample:"diff = 10 - 4  # 6"},
-    {word:"multiply",phonetic:"/ˈmʌltɪplaɪ/",chinese:"乘",pythonRole:"乘法运算符 *",pythonExample:"area = 6 * 7  # 42"},
-    {word:"divide",phonetic:"/dɪˈvaɪd/",chinese:"除",pythonRole:"除法运算符 /，结果有小数",pythonExample:"ratio = 10 / 3  # 3.333..."},
-    {word:"modulo",phonetic:"/ˈmɒdjʊləʊ/",chinese:"取余",pythonRole:"取余运算符 %",pythonExample:"10 % 3  # 1"},
-    {word:"power",phonetic:"/ˈpaʊər/",chinese:"幂运算",pythonRole:"乘方运算符 **",pythonExample:"2 ** 3  # 8"},
-    {word:"floor",phonetic:"/flɔːr/",chinese:"整除",pythonRole:"整除运算符 //，只留整数",pythonExample:"10 // 3  # 3"},
-    {word:"equal",phonetic:"/ˈiːkwəl/",chinese:"等于",pythonRole:"比较运算符 ==",pythonExample:"5 == 5  # True"},
-    {word:"and",phonetic:"/ænd/",chinese:"与",pythonRole:"两边都为 True 才是 True",pythonExample:"True and False  # False"},
-    {word:"or",phonetic:"/ɔːr/",chinese:"或",pythonRole:"任一边为 True 就是 True",pythonExample:"True or False  # True"},
-    {word:"not",phonetic:"/nɒt/",chinese:"非",pythonRole:"取反，True 变 False",pythonExample:"not True  # False"},
-    {word:"compare",phonetic:"/kəmˈpeər/",chinese:"比较",pythonRole:"比较两个值的大小",pythonExample:"5 > 3  # True"},
-    {word:"greater",phonetic:"/ˈɡreɪtər/",chinese:"大于",pythonRole:"> 运算符",pythonExample:"10 > 5  # True"},
-    {word:"less",phonetic:"/les/",chinese:"小于",pythonRole:"< 运算符",pythonExample:"3 < 7  # True"},
-    {word:"operator",phonetic:"/ˈɒpəreɪtər/",chinese:"运算符",pythonRole:"+ - * / 等符号",pythonExample:"# arithmetic operator 算术运算符"},
-    {word:"expression",phonetic:"/ɪkˈspreʃn/",chinese:"表达式",pythonRole:"能算出值的代码片段",pythonExample:"x + y * 2  # 这是一个 expression"},
-    {word:"evaluate",phonetic:"/ɪˈvæljueɪt/",chinese:"求值",pythonRole:"计算表达式的结果",pythonExample:"# Python 会 evaluate 表达式"},
-    {word:"result",phonetic:"/rɪˈzʌlt/",chinese:"结果",pythonRole:"计算或函数返回的值",pythonExample:"result = add(2, 3)"},
-    {word:"negative",phonetic:"/ˈneɡətɪv/",chinese:"负数",pythonRole:"小于零的数",pythonExample:"temp = -10  # negative number"}
+  {id:"level-5",name:"杩愮畻涓庨€昏緫",icon:"鈿欙笍",unlockScore:380,desc:"璁╃▼搴忓仛鏁板鍜岄€昏緫鍒ゆ柇",words:[
+    {word:"add",phonetic:"/忙d/",chinese:"鍔?,pythonRole:"鍔犳硶杩愮畻绗?+",pythonExample:"total = 3 + 5  # 8"},
+    {word:"subtract",phonetic:"/s蓹b藞tr忙kt/",chinese:"鍑?,pythonRole:"鍑忔硶杩愮畻绗?-",pythonExample:"diff = 10 - 4  # 6"},
+    {word:"multiply",phonetic:"/藞m蕦lt瑟pla瑟/",chinese:"涔?,pythonRole:"涔樻硶杩愮畻绗?*",pythonExample:"area = 6 * 7  # 42"},
+    {word:"divide",phonetic:"/d瑟藞va瑟d/",chinese:"闄?,pythonRole:"闄ゆ硶杩愮畻绗?/锛岀粨鏋滄湁灏忔暟",pythonExample:"ratio = 10 / 3  # 3.333..."},
+    {word:"modulo",phonetic:"/藞m蓲dj蕣l蓹蕣/",chinese:"鍙栦綑",pythonRole:"鍙栦綑杩愮畻绗?%",pythonExample:"10 % 3  # 1"},
+    {word:"power",phonetic:"/藞pa蕣蓹r/",chinese:"骞傝繍绠?,pythonRole:"涔樻柟杩愮畻绗?**",pythonExample:"2 ** 3  # 8"},
+    {word:"floor",phonetic:"/fl蓴藧r/",chinese:"鏁撮櫎",pythonRole:"鏁撮櫎杩愮畻绗?//锛屽彧鐣欐暣鏁?,pythonExample:"10 // 3  # 3"},
+    {word:"equal",phonetic:"/藞i藧kw蓹l/",chinese:"绛変簬",pythonRole:"姣旇緝杩愮畻绗?==",pythonExample:"5 == 5  # True"},
+    {word:"and",phonetic:"/忙nd/",chinese:"涓?,pythonRole:"涓よ竟閮戒负 True 鎵嶆槸 True",pythonExample:"True and False  # False"},
+    {word:"or",phonetic:"/蓴藧r/",chinese:"鎴?,pythonRole:"浠讳竴杈逛负 True 灏辨槸 True",pythonExample:"True or False  # True"},
+    {word:"not",phonetic:"/n蓲t/",chinese:"闈?,pythonRole:"鍙栧弽锛孴rue 鍙?False",pythonExample:"not True  # False"},
+    {word:"compare",phonetic:"/k蓹m藞pe蓹r/",chinese:"姣旇緝",pythonRole:"姣旇緝涓や釜鍊肩殑澶у皬",pythonExample:"5 > 3  # True"},
+    {word:"greater",phonetic:"/藞伞re瑟t蓹r/",chinese:"澶т簬",pythonRole:"> 杩愮畻绗?,pythonExample:"10 > 5  # True"},
+    {word:"less",phonetic:"/les/",chinese:"灏忎簬",pythonRole:"< 杩愮畻绗?,pythonExample:"3 < 7  # True"},
+    {word:"operator",phonetic:"/藞蓲p蓹re瑟t蓹r/",chinese:"杩愮畻绗?,pythonRole:"+ - * / 绛夌鍙?,pythonExample:"# arithmetic operator 绠楁湳杩愮畻绗?},
+    {word:"expression",phonetic:"/瑟k藞spre蕛n/",chinese:"琛ㄨ揪寮?,pythonRole:"鑳界畻鍑哄€肩殑浠ｇ爜鐗囨",pythonExample:"x + y * 2  # 杩欐槸涓€涓?expression"},
+    {word:"evaluate",phonetic:"/瑟藞v忙ljue瑟t/",chinese:"姹傚€?,pythonRole:"璁＄畻琛ㄨ揪寮忕殑缁撴灉",pythonExample:"# Python 浼?evaluate 琛ㄨ揪寮?},
+    {word:"result",phonetic:"/r瑟藞z蕦lt/",chinese:"缁撴灉",pythonRole:"璁＄畻鎴栧嚱鏁拌繑鍥炵殑鍊?,pythonExample:"result = add(2, 3)"},
+    {word:"negative",phonetic:"/藞ne伞蓹t瑟v/",chinese:"璐熸暟",pythonRole:"灏忎簬闆剁殑鏁?,pythonExample:"temp = -10  # negative number"}
   ]},
-  {id:"level-6",name:"进阶高手",icon:"🏆",unlockScore:520,desc:"类、匿名函数、高阶函数",words:[
-    {word:"class",phonetic:"/klɑːs/",chinese:"类",pythonRole:"定义对象的蓝图",pythonExample:"class Dog:\n    def __init__(self, name):\n        self.name = name"},
-    {word:"self",phonetic:"/self/",chinese:"自身",pythonRole:"类方法里指向实例自己",pythonExample:"class Cat:\n    def speak(self):\n        print('Meow')"},
-    {word:"init",phonetic:"/ɪˈnɪt/",chinese:"初始化",pythonRole:"创建对象时自动调用的方法",pythonExample:"def __init__(self, name):\n    self.name = name"},
-    {word:"lambda",phonetic:"/ˈlæmdə/",chinese:"匿名函数",pythonRole:"一行搞定的简短函数",pythonExample:"square = lambda x: x ** 2"},
-    {word:"scope",phonetic:"/skəʊp/",chinese:"作用域",pythonRole:"变量能被访问的范围",pythonExample:"x = 10  # 全局\ndef foo():\n    x = 5  # 局部"},
-    {word:"global",phonetic:"/ˈɡləʊbl/",chinese:"全局的",pythonRole:"声明变量是全局的",pythonExample:"count = 0\ndef inc():\n    global count\n    count += 1"},
-    {word:"enumerate",phonetic:"/ɪˈnjuːməreɪt/",chinese:"枚举",pythonRole:"同时拿到索引和值",pythonExample:"for i, v in enumerate(['a','b']):\n    print(i, v)"},
-    {word:"zip",phonetic:"/zɪp/",chinese:"压缩配对",pythonRole:"把多个序列按位置配对",pythonExample:"list(zip([1,2],['a','b']))\n# [(1,'a'),(2,'b')]"},
-    {word:"map",phonetic:"/mæp/",chinese:"映射",pythonRole:"对每个元素执行同一个函数",pythonExample:"list(map(str, [1,2,3]))\n# ['1','2','3']"},
-    {word:"filter",phonetic:"/ˈfɪltər/",chinese:"过滤",pythonRole:"只留下满足条件的元素",pythonExample:"list(filter(lambda x:x>2, [1,2,3,4]))\n# [3,4]"},
-    {word:"yield",phonetic:"/jiːld/",chinese:"产出",pythonRole:"生成器，一次吐一个值",pythonExample:"def count_up():\n    yield 1\n    yield 2"},
-    {word:"async",phonetic:"eɪˈsɪŋk",chinese:"异步",pythonRole:"声明异步函数，不阻塞等待",pythonExample:"async def fetch_data():\n    await sleep(1)"},
-    {word:"object",phonetic:"/ˈɒbdʒɪkt/",chinese:"对象",pythonRole:"类的实例，包含数据和方法",pythonExample:"dog = Dog('Buddy')  # 创建对象"},
-    {word:"method",phonetic:"/ˈmeθəd/",chinese:"方法",pythonRole:"类中定义的函数",pythonExample:"dog.bark()  # 调用 method"},
-    {word:"attribute",phonetic:"/ˈætrɪbjuːt/",chinese:"属性",pythonRole:"对象的数据成员",pythonExample:"dog.name  # 访问 attribute"},
-    {word:"inherit",phonetic:"/ɪnˈherɪt/",chinese:"继承",pythonRole:"子类获得父类的特性",pythonExample:"class Cat(Animal):  # Cat 继承 Animal"},
-    {word:"override",phonetic:"/ˌəʊvəˈraɪd/",chinese:"重写",pythonRole:"子类重新定义父类方法",pythonExample:"# override parent method"},
-    {word:"instance",phonetic:"/ˈɪnstəns/",chinese:"实例",pythonRole:"类的具体对象",pythonExample:"isinstance(dog, Dog)  # True"},
-    {word:"decorator",phonetic:"/ˈdekəreɪtər/",chinese:"装饰器",pythonRole:"修改函数行为的语法糖",pythonExample:"@property\ndef name(self):"}
+  {id:"level-6",name:"杩涢樁楂樻墜",icon:"馃弳",unlockScore:520,desc:"绫汇€佸尶鍚嶅嚱鏁般€侀珮闃跺嚱鏁?,words:[
+    {word:"class",phonetic:"/kl蓱藧s/",chinese:"绫?,pythonRole:"瀹氫箟瀵硅薄鐨勮摑鍥?,pythonExample:"class Dog:\n    def __init__(self, name):\n        self.name = name"},
+    {word:"self",phonetic:"/self/",chinese:"鑷韩",pythonRole:"绫绘柟娉曢噷鎸囧悜瀹炰緥鑷繁",pythonExample:"class Cat:\n    def speak(self):\n        print('Meow')"},
+    {word:"init",phonetic:"/瑟藞n瑟t/",chinese:"鍒濆鍖?,pythonRole:"鍒涘缓瀵硅薄鏃惰嚜鍔ㄨ皟鐢ㄧ殑鏂规硶",pythonExample:"def __init__(self, name):\n    self.name = name"},
+    {word:"lambda",phonetic:"/藞l忙md蓹/",chinese:"鍖垮悕鍑芥暟",pythonRole:"涓€琛屾悶瀹氱殑绠€鐭嚱鏁?,pythonExample:"square = lambda x: x ** 2"},
+    {word:"scope",phonetic:"/sk蓹蕣p/",chinese:"浣滅敤鍩?,pythonRole:"鍙橀噺鑳借璁块棶鐨勮寖鍥?,pythonExample:"x = 10  # 鍏ㄥ眬\ndef foo():\n    x = 5  # 灞€閮?},
+    {word:"global",phonetic:"/藞伞l蓹蕣bl/",chinese:"鍏ㄥ眬鐨?,pythonRole:"澹版槑鍙橀噺鏄叏灞€鐨?,pythonExample:"count = 0\ndef inc():\n    global count\n    count += 1"},
+    {word:"enumerate",phonetic:"/瑟藞nju藧m蓹re瑟t/",chinese:"鏋氫妇",pythonRole:"鍚屾椂鎷垮埌绱㈠紩鍜屽€?,pythonExample:"for i, v in enumerate(['a','b']):\n    print(i, v)"},
+    {word:"zip",phonetic:"/z瑟p/",chinese:"鍘嬬缉閰嶅",pythonRole:"鎶婂涓簭鍒楁寜浣嶇疆閰嶅",pythonExample:"list(zip([1,2],['a','b']))\n# [(1,'a'),(2,'b')]"},
+    {word:"map",phonetic:"/m忙p/",chinese:"鏄犲皠",pythonRole:"瀵规瘡涓厓绱犳墽琛屽悓涓€涓嚱鏁?,pythonExample:"list(map(str, [1,2,3]))\n# ['1','2','3']"},
+    {word:"filter",phonetic:"/藞f瑟lt蓹r/",chinese:"杩囨护",pythonRole:"鍙暀涓嬫弧瓒虫潯浠剁殑鍏冪礌",pythonExample:"list(filter(lambda x:x>2, [1,2,3,4]))\n# [3,4]"},
+    {word:"yield",phonetic:"/ji藧ld/",chinese:"浜у嚭",pythonRole:"鐢熸垚鍣紝涓€娆″悙涓€涓€?,pythonExample:"def count_up():\n    yield 1\n    yield 2"},
+    {word:"async",phonetic:"e瑟藞s瑟艐k",chinese:"寮傛",pythonRole:"澹版槑寮傛鍑芥暟锛屼笉闃诲绛夊緟",pythonExample:"async def fetch_data():\n    await sleep(1)"},
+    {word:"object",phonetic:"/藞蓲bd蕭瑟kt/",chinese:"瀵硅薄",pythonRole:"绫荤殑瀹炰緥锛屽寘鍚暟鎹拰鏂规硶",pythonExample:"dog = Dog('Buddy')  # 鍒涘缓瀵硅薄"},
+    {word:"method",phonetic:"/藞me胃蓹d/",chinese:"鏂规硶",pythonRole:"绫讳腑瀹氫箟鐨勫嚱鏁?,pythonExample:"dog.bark()  # 璋冪敤 method"},
+    {word:"attribute",phonetic:"/藞忙tr瑟bju藧t/",chinese:"灞炴€?,pythonRole:"瀵硅薄鐨勬暟鎹垚鍛?,pythonExample:"dog.name  # 璁块棶 attribute"},
+    {word:"inherit",phonetic:"/瑟n藞her瑟t/",chinese:"缁ф壙",pythonRole:"瀛愮被鑾峰緱鐖剁被鐨勭壒鎬?,pythonExample:"class Cat(Animal):  # Cat 缁ф壙 Animal"},
+    {word:"override",phonetic:"/藢蓹蕣v蓹藞ra瑟d/",chinese:"閲嶅啓",pythonRole:"瀛愮被閲嶆柊瀹氫箟鐖剁被鏂规硶",pythonExample:"# override parent method"},
+    {word:"instance",phonetic:"/藞瑟nst蓹ns/",chinese:"瀹炰緥",pythonRole:"绫荤殑鍏蜂綋瀵硅薄",pythonExample:"isinstance(dog, Dog)  # True"},
+    {word:"decorator",phonetic:"/藞dek蓹re瑟t蓹r/",chinese:"瑁呴グ鍣?,pythonRole:"淇敼鍑芥暟琛屼负鐨勮娉曠硸",pythonExample:"@property\ndef name(self):"}
   ]}
 ];
 
-// ====== 全局状态 ======
+// ====== 鍏ㄥ眬鐘舵€?======
 let currentUser = null;
 let cloudProgress = {};
 let currentCategory=null,currentWords=[],currentIdx=0,combo=0;
 let dictWords=[],dictIdx=0,dictResults=[],dictAnswered=false;
 let currentDictCategory=null,isHomeDict=false;
 
-// ====== 认证函数 ======
+// ====== 璁よ瘉鍑芥暟 ======
 async function checkAuth() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await supabaseClient.auth.getSession();
   if (session) {
     currentUser = session.user;
     await loadCloudProgress();
@@ -551,8 +551,7 @@ async function checkAuth() {
     showLoginPage();
   }
   
-  // 监听认证状态变化
-  supabase.auth.onAuthStateChange(async (event, session) => {
+  // 鐩戝惉璁よ瘉鐘舵€佸彉鍖?  supabaseClient.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_IN' && session) {
       currentUser = session.user;
       await loadCloudProgress();
@@ -580,7 +579,7 @@ function showMainApp() {
   document.getElementById('mainNavbar').style.display = 'flex';
   document.getElementById('pageHome').classList.add('active');
   
-  // 更新用户信息显示
+  // 鏇存柊鐢ㄦ埛淇℃伅鏄剧ず
   updateUserInfo();
   renderHome();
 }
@@ -602,7 +601,7 @@ function toggleUserMenu() {
   document.getElementById('userMenu').classList.toggle('show');
 }
 
-// 点击其他地方关闭菜单
+// 鐐瑰嚮鍏朵粬鍦版柟鍏抽棴鑿滃崟
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.topbar-user') && !e.target.closest('.user-menu')) {
     document.getElementById('userMenu').classList.remove('show');
@@ -617,27 +616,25 @@ async function handleLogin() {
   const btnText = document.getElementById('loginBtnText');
   
   if (!email || !password) {
-    errorEl.textContent = '请输入邮箱和密码';
+    errorEl.textContent = '璇疯緭鍏ラ偖绠卞拰瀵嗙爜';
     errorEl.style.display = 'block';
     return;
   }
   
   if (password.length < 6) {
-    errorEl.textContent = '密码至少6位';
+    errorEl.textContent = '瀵嗙爜鑷冲皯6浣?;
     errorEl.style.display = 'block';
     return;
   }
   
   errorEl.style.display = 'none';
   loadingEl.style.display = 'flex';
-  btnText.textContent = '登录中...';
+  btnText.textContent = '鐧诲綍涓?..';
   
-  // 先尝试登录
-  let { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  // 鍏堝皾璇曠櫥褰?  let { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
   
-  // 如果登录失败，尝试注册
-  if (error) {
-    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ 
+  // 濡傛灉鐧诲綍澶辫触锛屽皾璇曟敞鍐?  if (error) {
+    const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({ 
       email, 
       password,
       options: { emailRedirectTo: window.location.origin }
@@ -647,13 +644,13 @@ async function handleLogin() {
       errorEl.textContent = signUpError.message;
       errorEl.style.display = 'block';
       loadingEl.style.display = 'none';
-      btnText.textContent = '登录 / 注册';
+      btnText.textContent = '鐧诲綍 / 娉ㄥ唽';
       return;
     }
     
-    // 注册成功
+    // 娉ㄥ唽鎴愬姛
     if (signUpData.user && !signUpData.session) {
-      errorEl.textContent = '注册成功！请检查邮箱验证后登录';
+      errorEl.textContent = '娉ㄥ唽鎴愬姛锛佽妫€鏌ラ偖绠遍獙璇佸悗鐧诲綍';
       errorEl.style.display = 'block';
       errorEl.style.background = 'rgba(78,205,196,.1)';
       errorEl.style.color = 'var(--accent3)';
@@ -661,11 +658,11 @@ async function handleLogin() {
   }
   
   loadingEl.style.display = 'none';
-  btnText.textContent = '登录 / 注册';
+  btnText.textContent = '鐧诲綍 / 娉ㄥ唽';
 }
 
 async function handleGitHubLogin() {
-  const { error } = await supabase.auth.signInWithOAuth({
+  const { error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'github',
     options: { redirectTo: window.location.origin }
   });
@@ -677,21 +674,21 @@ async function handleGitHubLogin() {
 }
 
 async function handleLogout() {
-  await supabase.auth.signOut();
+  await supabaseClient.auth.signOut();
   document.getElementById('userMenu').classList.remove('show');
 }
 
-// ====== 云端进度存储 ======
+// ====== 浜戠杩涘害瀛樺偍 ======
 async function loadCloudProgress() {
   if (!currentUser) return;
   
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('progress')
     .select('*')
     .eq('user_id', currentUser.id);
   
   if (error) {
-    console.error('加载进度失败:', error);
+    console.error('鍔犺浇杩涘害澶辫触:', error);
     return;
   }
   
@@ -714,7 +711,7 @@ async function saveCloudProgress(wordId, updates) {
   const existing = cloudProgress[wordId] || { mastered: false, wrong_count: 0, skip_count: 0, score: 0 };
   const newData = { ...existing, ...updates };
   
-  const { error } = await supabase
+  const { error } = await supabaseClient
     .from('progress')
     .upsert({
       user_id: currentUser.id,
@@ -727,13 +724,13 @@ async function saveCloudProgress(wordId, updates) {
     }, { onConflict: 'user_id,word_id' });
   
   if (error) {
-    console.error('保存进度失败:', error);
+    console.error('淇濆瓨杩涘害澶辫触:', error);
   } else {
     cloudProgress[wordId] = newData;
   }
 }
 
-// ====== 进度管理（替换原有的 localStorage） ======
+// ====== 杩涘害绠＄悊锛堟浛鎹㈠師鏈夌殑 localStorage锛?======
 function getScore() {
   let total = 0;
   Object.values(cloudProgress).forEach(p => total += p.score || 0);
@@ -782,20 +779,19 @@ function removeError(word) {
 }
 
 function getStreak() {
-  // 简化：从 cloudProgress 计算
+  // 绠€鍖栵細浠?cloudProgress 璁＄畻
   let streak = 0;
   const dates = new Set();
   Object.entries(cloudProgress).forEach(([wordId, data]) => {
-    // 假设有 last_practice 字段
+    // 鍋囪鏈?last_practice 瀛楁
   });
-  return Math.max(1, Math.floor(getScore() / 50)); // 简化计算
-}
+  return Math.max(1, Math.floor(getScore() / 50)); // 绠€鍖栬绠?}
 
-// ====== UI 函数 ======
+// ====== UI 鍑芥暟 ======
 function spawnParticles(x,y,count=12){const c=document.getElementById('particles'),colors=['#7c5cfc','#4ecdc4','#ffd93d','#ff6b6b','#a29bfe'];for(let i=0;i<count;i++){const p=document.createElement('div');p.className='particle';const sz=4+Math.random()*8,a=Math.random()*Math.PI*2,d=40+Math.random()*80;p.style.cssText=`left:${x}px;top:${y}px;width:${sz}px;height:${sz}px;background:${colors[i%colors.length]};--px:${Math.cos(a)*d}px;--py:${Math.sin(a)*d}px`;c.appendChild(p);setTimeout(()=>p.remove(),900)}}
-function showCombo(){const el=document.getElementById('comboDisplay');if(combo<2){el.classList.remove('active');return}el.textContent=`🔥 x${combo}`;el.classList.add('active');el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop')}
+function showCombo(){const el=document.getElementById('comboDisplay');if(combo<2){el.classList.remove('active');return}el.textContent=`馃敟 x${combo}`;el.classList.add('active');el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop')}
 
-/* 语音引擎 */
+/* 璇煶寮曟搸 */
 let voicesReady=false;
 if('speechSynthesis' in window){
   if(speechSynthesis.getVoices().length>0)voicesReady=true;
@@ -841,7 +837,7 @@ function switchPage(pageId,navEl){
   if(pageId==='pageReview')renderReview();
 }
 
-/* 首页 */
+/* 棣栭〉 */
 function renderHome(){
   const score=getScore();document.getElementById('topScore').textContent=score;
   const totalWords=VOCAB.reduce((s,c)=>s+c.words.length,0);
@@ -849,10 +845,10 @@ function renderHome(){
   const errs=getErrors();
   const totalErrors=Object.values(errs).reduce((a,b)=>a+(b.wrong||0)+(b.skipped||0),0);
   document.getElementById('statsRow').innerHTML=`
-    <div class="stat-card glass"><div class="val" style="color:var(--accent3)">${totalMastered}</div><div class="label">已掌握</div></div>
-    <div class="stat-card glass"><div class="val" style="color:var(--accent4)">${score}</div><div class="label">积分</div></div>
-    <div class="stat-card glass"><div class="val" style="color:var(--accent2)">${totalErrors}</div><div class="label">错题</div></div>
-    <div class="stat-card glass"><div class="val" style="color:var(--accent)">${getStreak()}</div><div class="label">连续天数</div></div>`;
+    <div class="stat-card glass"><div class="val" style="color:var(--accent3)">${totalMastered}</div><div class="label">宸叉帉鎻?/div></div>
+    <div class="stat-card glass"><div class="val" style="color:var(--accent4)">${score}</div><div class="label">绉垎</div></div>
+    <div class="stat-card glass"><div class="val" style="color:var(--accent2)">${totalErrors}</div><div class="label">閿欓</div></div>
+    <div class="stat-card glass"><div class="val" style="color:var(--accent)">${getStreak()}</div><div class="label">杩炵画澶╂暟</div></div>`;
   let currentCatId=null;
   for(let i=0;i<VOCAB.length;i++){const cat=VOCAB[i];if(score<cat.unlockScore)break;const m=getMastered(cat.id).length;if(m<cat.words.length){currentCatId=cat.id;break}if(i===VOCAB.length-1)currentCatId=cat.id}
   const map=document.getElementById('mapContainer');map.innerHTML='';
@@ -864,16 +860,16 @@ function renderHome(){
     const node=document.createElement('div');
     node.className=`map-node ${locked?'locked':isCurrent?'current':isCompleted?'completed':''}`.trim();
     node.innerHTML=`
-      <div class="node-num">${locked?'🔒':isCompleted?'✓':idx+1}</div>
+      <div class="node-num">${locked?'馃敀':isCompleted?'鉁?:idx+1}</div>
       <div class="node-icon">${cat.icon}</div>
       <div class="node-info">
         <h3>${cat.name}</h3><p class="desc">${cat.desc}</p>
-        <p>${locked?`需 ${cat.unlockScore} 积分解锁`:`${total} 词 · 已掌握 ${mastered}`}</p>
+        <p>${locked?`闇€ ${cat.unlockScore} 绉垎瑙ｉ攣`:`${total} 璇?路 宸叉帉鎻?${mastered}`}</p>
         ${!locked?`<div class="node-progress"><div class="node-progress-bar" style="width:${pct}%"></div></div>`:''}
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-        <div class="node-badge ${isCompleted?'badge-done':isCurrent?'badge-progress':'badge-locked'}">${isCompleted?'完成':isCurrent?`${pct}%`:locked?'锁定':'0%'}</div>
-        ${!locked?`<button class="btn btn-sm ${isCompleted?'btn-secondary':'btn-primary'}" onclick="event.stopPropagation();startDictationFromHome('${cat.id}')" style="min-width:70px;font-size:11px">${isCompleted?'🔄 复习':'🎧 去听写'}</button>`:''}
+        <div class="node-badge ${isCompleted?'badge-done':isCurrent?'badge-progress':'badge-locked'}">${isCompleted?'瀹屾垚':isCurrent?`${pct}%`:locked?'閿佸畾':'0%'}</div>
+        ${!locked?`<button class="btn btn-sm ${isCompleted?'btn-secondary':'btn-primary'}" onclick="event.stopPropagation();startDictationFromHome('${cat.id}')" style="min-width:70px;font-size:11px">${isCompleted?'馃攧 澶嶄範':'馃帶 鍘诲惉鍐?}</button>`:''}
       </div>`;
     if(!locked)node.onclick=()=>startCategory(cat);
     map.appendChild(node);nodes.push(node);
@@ -905,7 +901,7 @@ function startCategory(cat){
   switchPage('pageLearn');showCard();
 }
 
-/* 学习页 */
+/* 瀛︿範椤?*/
 function showCard(){
   if(!currentCategory)return;
   if(!currentWords.length)currentWords=[...currentCategory.words];
@@ -930,13 +926,13 @@ function checkSpell(){
   const w=currentWords[currentIdx];const inp=document.getElementById('spellInput');const res=document.getElementById('spellResult');
   if(inp.value.trim().toLowerCase()===w.word.toLowerCase()){
     if(!spellCorrect){
-      inp.className='spell-input correct';res.textContent='✓ 正确！点击 🔁 再练一次';res.className='spell-result ok';
+      inp.className='spell-input correct';res.textContent='鉁?姝ｇ‘锛佺偣鍑?馃攣 鍐嶇粌涓€娆?;res.className='spell-result ok';
       addScore(5, w.word);const rect=inp.getBoundingClientRect();spawnParticles(rect.left+rect.width/2,rect.top);
       spellCorrect=true;
       document.getElementById('spellRetryBtn').style.display='inline-flex';
     }
   }else{
-    inp.className='spell-input wrong';res.textContent=`✗ 正确拼写: ${w.word}`;res.className='spell-result fail';
+    inp.className='spell-input wrong';res.textContent=`鉁?姝ｇ‘鎷煎啓: ${w.word}`;res.className='spell-result fail';
     addError(w.word,'wrong');setTimeout(()=>{inp.className='spell-input'},500);
   }
 }
@@ -953,15 +949,15 @@ function retrySpell(){
 function checkListen(){
   const w=currentWords[currentIdx];const inp=document.getElementById('listenInput');const res=document.getElementById('listenResult');
   if(inp.value.trim().toLowerCase()===w.word.toLowerCase()){
-    inp.className='listen-input correct';res.textContent='✓ 听写正确！';res.className='listen-result ok';
+    inp.className='listen-input correct';res.textContent='鉁?鍚啓姝ｇ‘锛?;res.className='listen-result ok';
     addScore(5, w.word);const rect=inp.getBoundingClientRect();spawnParticles(rect.left+rect.width/2,rect.top);
   }else{
-    inp.className='listen-input wrong';res.textContent=`✗ 正确答案: ${w.word}`;res.className='listen-result fail';
+    inp.className='listen-input wrong';res.textContent=`鉁?姝ｇ‘绛旀: ${w.word}`;res.className='listen-result fail';
     addError(w.word,'wrong');setTimeout(()=>{inp.className='listen-input'},500);
   }
 }
 
-/* 听写测试 */
+/* 鍚啓娴嬭瘯 */
 function startDictationFromHome(categoryId){
   isHomeDict=true;
   startDictation(categoryId);
@@ -969,16 +965,16 @@ function startDictationFromHome(categoryId){
 
 function selectDictCategory(){
   const score=getScore();
-  let html='<div style="text-align:center;padding:40px 20px"><h2 style="margin-bottom:20px">选择听写单元</h2><div style="display:grid;gap:12px;max-width:400px;margin:0 auto">';
+  let html='<div style="text-align:center;padding:40px 20px"><h2 style="margin-bottom:20px">閫夋嫨鍚啓鍗曞厓</h2><div style="display:grid;gap:12px;max-width:400px;margin:0 auto">';
   VOCAB.forEach((cat,idx)=>{
     const locked=score<cat.unlockScore;
     const mastered=getMastered(cat.id).length;
     html+=`<button class="btn ${locked?'btn-secondary':'btn-primary'}" style="justify-content:space-between;width:100%" ${locked?'disabled':`onclick="startDictation('${cat.id}')"`}>
       <span>${cat.icon} ${cat.name}</span>
-      <span style="font-size:12px;opacity:0.8">${locked?'🔒 未解锁':mastered>=cat.words.length?'✓ 已完成':mastered+'/'+cat.words.length}</span>
+      <span style="font-size:12px;opacity:0.8">${locked?'馃敀 鏈В閿?:mastered>=cat.words.length?'鉁?宸插畬鎴?:mastered+'/'+cat.words.length}</span>
     </button>`;
   });
-  html+='</div><button class="btn btn-secondary" style="margin-top:20px" onclick="switchPage(\'pageHome\')">返回</button></div>';
+  html+='</div><button class="btn btn-secondary" style="margin-top:20px" onclick="switchPage(\'pageHome\')">杩斿洖</button></div>';
   document.getElementById('pageDictation').innerHTML=html;
   switchPage('pageDictation');
 }
@@ -1004,33 +1000,33 @@ function restoreDictationPage(){
   document.getElementById('pageDictation').innerHTML=`
   <div class="container">
     <div class="learn-top">
-      <h2 id="dictTitle">听写测试</h2>
+      <h2 id="dictTitle">鍚啓娴嬭瘯</h2>
       <span class="counter" id="dictCounter">0/0</span>
     </div>
     <div style="text-align:center;margin-bottom:12px">
-      <span style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(78,205,196,.15);color:var(--accent3);border:1px solid rgba(78,205,196,.3)">👂 听写阶段 · <span id="dictCatName"></span></span>
+      <span style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(78,205,196,.15);color:var(--accent3);border:1px solid rgba(78,205,196,.3)">馃憘 鍚啓闃舵 路 <span id="dictCatName"></span></span>
     </div>
     <div class="word-card" id="dictCard">
       <div class="card-head" style="padding:28px 24px 12px">
-        <div style="font-size:13px;color:var(--text2);margin-bottom:8px">👂 听发音，根据 Python 作用写出单词</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px">馃憘 鍚彂闊筹紝鏍规嵁 Python 浣滅敤鍐欏嚭鍗曡瘝</div>
         <div class="role" id="dictHint" style="text-align:left;margin-top:12px"></div>
       </div>
       <div style="padding:4px 24px 16px;display:flex;align-items:center;gap:12px">
-        <button class="listen-play-btn" id="dictPlayBtn" onclick="playDict()" title="播放发音" style="width:52px;height:52px;font-size:24px">🔊</button>
-        <div style="font-size:12px;color:var(--text2);line-height:1.5">点击播放听发音<br>可重复播放</div>
+        <button class="listen-play-btn" id="dictPlayBtn" onclick="playDict()" title="鎾斁鍙戦煶" style="width:52px;height:52px;font-size:24px">馃攰</button>
+        <div style="font-size:12px;color:var(--text2);line-height:1.5">鐐瑰嚮鎾斁鍚彂闊?br>鍙噸澶嶆挱鏀?/div>
       </div>
       <div class="listen-section" style="border-top:1px solid rgba(255,255,255,.06);padding-top:16px">
-        <div class="label">写出你听到的单词</div>
+        <div class="label">鍐欏嚭浣犲惉鍒扮殑鍗曡瘝</div>
         <div class="listen-row">
-          <input class="listen-input" id="dictInput" autocomplete="off" placeholder="听音拼写…" onkeydown="if(event.key==='Enter')checkDict()">
-          <button class="listen-check-btn" onclick="checkDict()" title="确认">✓</button>
+          <input class="listen-input" id="dictInput" autocomplete="off" placeholder="鍚煶鎷煎啓鈥? onkeydown="if(event.key==='Enter')checkDict()">
+          <button class="listen-check-btn" onclick="checkDict()" title="纭">鉁?/button>
         </div>
         <div class="listen-result" id="dictResult"></div>
-        <button class="btn btn-sm btn-secondary" onclick="skipDict()" style="margin-top:10px;width:100%">⏭️ 跳过这题</button>
+        <button class="btn btn-sm btn-secondary" onclick="skipDict()" style="margin-top:10px;width:100%">鈴笍 璺宠繃杩欓</button>
       </div>
       <div id="dictReveal" style="display:none;padding:0 24px 24px">
         <div class="card-section" style="margin-bottom:0">
-          <div class="card-section-label">单词详情</div>
+          <div class="card-section-label">鍗曡瘝璇︽儏</div>
           <div style="font-size:28px;font-weight:900;letter-spacing:1px;margin:6px 0" id="dictRevealWord"></div>
           <div style="font-size:13px;color:var(--accent3)" id="dictRevealPhonetic"></div>
           <div style="font-size:16px;color:var(--accent3);margin-top:6px" id="dictRevealChinese"></div>
@@ -1040,18 +1036,18 @@ function restoreDictationPage(){
       </div>
     </div>
     <div class="learn-actions" id="dictActions" style="display:none">
-      <button class="btn btn-primary btn-sm" onclick="nextDict()">下一题 →</button>
+      <button class="btn btn-primary btn-sm" onclick="nextDict()">涓嬩竴棰?鈫?/button>
     </div>
     <div id="dictSummary" style="display:none">
       <div style="text-align:center;padding:30px 0 20px">
-        <div style="font-size:48px;margin-bottom:10px" id="dictSummaryEmoji">🎉</div>
-        <div style="font-size:20px;font-weight:700" id="dictSummaryTitle">听写完成！</div>
+        <div style="font-size:48px;margin-bottom:10px" id="dictSummaryEmoji">馃帀</div>
+        <div style="font-size:20px;font-weight:700" id="dictSummaryTitle">鍚啓瀹屾垚锛?/div>
         <div style="font-size:14px;color:var(--text2);margin-top:6px" id="dictSummaryDesc"></div>
       </div>
       <div id="dictSummaryList" style="display:grid;gap:8px;margin-top:16px"></div>
       <div style="text-align:center;margin-top:24px;display:flex;gap:12px;justify-content:center">
-        <button class="btn btn-secondary btn-sm" onclick="switchPage('pageHome')">返回地图 🗺️</button>
-        <button class="btn btn-primary btn-sm" onclick="retryDictation()">再来一次 🔄</button>
+        <button class="btn btn-secondary btn-sm" onclick="switchPage('pageHome')">杩斿洖鍦板浘 馃椇锔?/button>
+        <button class="btn btn-primary btn-sm" onclick="retryDictation()">鍐嶆潵涓€娆?馃攧</button>
       </div>
     </div>
   </div>`;
@@ -1062,7 +1058,7 @@ function showDictWord(){
   const w=dictWords[dictIdx];
   dictAnswered=false;
   document.getElementById('dictCounter').textContent=`${dictIdx+1}/${dictWords.length}`;
-  document.getElementById('dictTitle').textContent='听写测试';
+  document.getElementById('dictTitle').textContent='鍚啓娴嬭瘯';
   const catNameEl=document.getElementById('dictCatName');
   if(catNameEl&&currentDictCategory)catNameEl.textContent=currentDictCategory.name;
   document.getElementById('dictHint').textContent=w.pythonRole;
@@ -1094,7 +1090,7 @@ function checkDict(){
   inp.disabled=true;
   if(correct){
     inp.className='listen-input correct';
-    res.textContent='✓ 正确！';
+    res.textContent='鉁?姝ｇ‘锛?;
     res.className='listen-result ok';
     addScore(10, w.word);
     dictResults.push({word:w.word,correct:true});
@@ -1105,7 +1101,7 @@ function checkDict(){
     },1200);
   }else{
     inp.className='listen-input wrong';
-    res.textContent='✗ 错误';
+    res.textContent='鉁?閿欒';
     res.className='listen-result fail';
     addError(w.word,'wrong');
     dictResults.push({word:w.word,correct:false});
@@ -1120,7 +1116,7 @@ function skipDict(){
   const inp=document.getElementById('dictInput');
   inp.disabled=true;
   inp.className='listen-input';
-  document.getElementById('dictResult').textContent='⏭️ 已跳过';
+  document.getElementById('dictResult').textContent='鈴笍 宸茶烦杩?;
   document.getElementById('dictResult').className='listen-result';
   addError(w.word,'skipped');
   dictResults.push({word:w.word,correct:false,skipped:true});
@@ -1161,25 +1157,25 @@ function showDictSummary(){
     });
   }
   
-  let emoji='💪',title='继续加油';
-  if(allPassed){emoji='🏆';title='🎉 单元完成！';}
-  else if(correctCount===total){emoji='👏';title='听写完成';}
-  else if(correctCount>=total*0.7){emoji='👍';title='表现不错！';}
+  let emoji='馃挭',title='缁х画鍔犳补';
+  if(allPassed){emoji='馃弳';title='馃帀 鍗曞厓瀹屾垚锛?;}
+  else if(correctCount===total){emoji='馃憦';title='鍚啓瀹屾垚';}
+  else if(correctCount>=total*0.7){emoji='馃憤';title='琛ㄧ幇涓嶉敊锛?;}
   
   document.getElementById('dictSummaryEmoji').textContent=emoji;
   document.getElementById('dictSummaryTitle').textContent=title;
-  document.getElementById('dictSummaryDesc').textContent=`<span style="color:var(--accent3)">${correctCount}</span> 正确 · <span style="color:${skippedCount>0?'var(--text2)':'transparent'}">⏭ ${skippedCount} 跳过</span> · <span style="color:${wrongCount>0?'var(--accent2)':'transparent'}">✗ ${wrongCount} 错误</span>${allPassed&&currentDictCategory?'<br><span style="color:var(--accent4);font-size:14px">✨ 恭喜通过该单元！</span>':''}`;
+  document.getElementById('dictSummaryDesc').textContent=`<span style="color:var(--accent3)">${correctCount}</span> 姝ｇ‘ 路 <span style="color:${skippedCount>0?'var(--text2)':'transparent'}">鈴?${skippedCount} 璺宠繃</span> 路 <span style="color:${wrongCount>0?'var(--accent2)':'transparent'}">鉁?${wrongCount} 閿欒</span>${allPassed&&currentDictCategory?'<br><span style="color:var(--accent4);font-size:14px">鉁?鎭枩閫氳繃璇ュ崟鍏冿紒</span>':''}`;
   
   const reviewItems=dictResults.filter(r=>!r.correct);
   let listHtml='';
   if(reviewItems.length===0){
-    listHtml='<div style="text-align:center;padding:20px;color:var(--text2)">🎉 全部正确！没有需要复习的词</div>';
+    listHtml='<div style="text-align:center;padding:20px;color:var(--text2)">馃帀 鍏ㄩ儴姝ｇ‘锛佹病鏈夐渶瑕佸涔犵殑璇?/div>';
   }else{
-    listHtml+=`<div style="font-size:12px;color:var(--text2);margin-bottom:10px">以下 ${reviewItems.length} 个词需要重点复习：</div>`;
+    listHtml+=`<div style="font-size:12px;color:var(--text2);margin-bottom:10px">浠ヤ笅 ${reviewItems.length} 涓瘝闇€瑕侀噸鐐瑰涔狅細</div>`;
     reviewItems.forEach((r)=>{
       const idx=dictResults.indexOf(r);
       const w=dictWords[idx];
-      const icon=r.skipped?'⏭':'✗';
+      const icon=r.skipped?'鈴?:'鉁?;
       const color=r.skipped?'var(--text2)':'var(--accent2)';
       listHtml+=`<div class="review-item glass" style="padding:12px 14px;display:block">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
@@ -1225,7 +1221,7 @@ function markWord(known){
   showCard();
 }
 
-/* 复习 */
+/* 澶嶄範 */
 function renderReview(){
   const errors=getErrors();
   const c=document.getElementById('reviewContent');
@@ -1238,23 +1234,23 @@ function renderReview(){
     if((counts.skipped||0)>0) skippedWords.push({word,count:counts.skipped,info});
   });
   if(!wrongWords.length&&!skippedWords.length){
-    c.innerHTML='<div class="review-empty"><div class="icon">🎉</div><p>没有错题，继续保持！</p></div>';return;
+    c.innerHTML='<div class="review-empty"><div class="icon">馃帀</div><p>娌℃湁閿欓锛岀户缁繚鎸侊紒</p></div>';return;
   }
   let h='';
   if(wrongWords.length>0){
     h+=`<div style="margin-bottom:24px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <span style="font-size:18px">✗</span>
-        <h3 style="font-size:15px;font-weight:700;color:var(--accent2)">拼写错误</h3>
-        <span style="font-size:12px;color:var(--text2);margin-left:auto">${wrongWords.length} 个词</span>
+        <span style="font-size:18px">鉁?/span>
+        <h3 style="font-size:15px;font-weight:700;color:var(--accent2)">鎷煎啓閿欒</h3>
+        <span style="font-size:12px;color:var(--text2);margin-left:auto">${wrongWords.length} 涓瘝</span>
       </div>
       <div class="review-list">`;
     wrongWords.forEach(item=>{
       h+=`<div class="review-item glass">
         <div class="word">${item.word}${item.info?` <span style="color:var(--text2);font-size:12px">${item.info.chinese}</span>`:''}</div>
-        <div class="err-count">错 ${item.count} 次</div>
-        <button class="btn btn-sm btn-secondary" onclick="practiceError('${item.word}')">练习</button>
-        <button class="btn btn-sm btn-danger" onclick="clearError('${item.word}')">清除</button>
+        <div class="err-count">閿?${item.count} 娆?/div>
+        <button class="btn btn-sm btn-secondary" onclick="practiceError('${item.word}')">缁冧範</button>
+        <button class="btn btn-sm btn-danger" onclick="clearError('${item.word}')">娓呴櫎</button>
       </div>`;
     });
     h+='</div></div>';
@@ -1262,17 +1258,17 @@ function renderReview(){
   if(skippedWords.length>0){
     h+=`<div style="margin-bottom:24px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <span style="font-size:18px">⏭</span>
-        <h3 style="font-size:15px;font-weight:700;color:var(--text2)">跳过不会</h3>
-        <span style="font-size:12px;color:var(--text2);margin-left:auto">${skippedWords.length} 个词</span>
+        <span style="font-size:18px">鈴?/span>
+        <h3 style="font-size:15px;font-weight:700;color:var(--text2)">璺宠繃涓嶄細</h3>
+        <span style="font-size:12px;color:var(--text2);margin-left:auto">${skippedWords.length} 涓瘝</span>
       </div>
       <div class="review-list">`;
     skippedWords.forEach(item=>{
       h+=`<div class="review-item glass">
         <div class="word">${item.word}${item.info?` <span style="color:var(--text2);font-size:12px">${item.info.chinese}</span>`:''}</div>
-        <div style="font-size:11px;color:var(--text2);background:rgba(255,255,255,.06);padding:3px 10px;border-radius:8px">跳过 ${item.count} 次</div>
-        <button class="btn btn-sm btn-secondary" onclick="practiceError('${item.word}')">练习</button>
-        <button class="btn btn-sm btn-danger" onclick="clearError('${item.word}')">清除</button>
+        <div style="font-size:11px;color:var(--text2);background:rgba(255,255,255,.06);padding:3px 10px;border-radius:8px">璺宠繃 ${item.count} 娆?/div>
+        <button class="btn btn-sm btn-secondary" onclick="practiceError('${item.word}')">缁冧範</button>
+        <button class="btn btn-sm btn-danger" onclick="clearError('${item.word}')">娓呴櫎</button>
       </div>`;
     });
     h+='</div></div>';
@@ -1280,10 +1276,10 @@ function renderReview(){
   c.innerHTML=h;
 }
 
-function practiceError(word){let cat=null,wObj=null;VOCAB.forEach(c=>c.words.forEach(w=>{if(w.word===word){cat=c;wObj=w}}));if(cat&&wObj){currentCategory=cat;currentWords=[wObj];currentIdx=0;combo=0;document.getElementById('learnTitle').textContent='错题练习';switchPage('pageLearn');showCard()}}
+function practiceError(word){let cat=null,wObj=null;VOCAB.forEach(c=>c.words.forEach(w=>{if(w.word===word){cat=c;wObj=w}}));if(cat&&wObj){currentCategory=cat;currentWords=[wObj];currentIdx=0;combo=0;document.getElementById('learnTitle').textContent='閿欓缁冧範';switchPage('pageLearn');showCard()}}
 function clearError(word){removeError(word);renderReview()}
 
-/* 个人中心 */
+/* 涓汉涓績 */
 function renderProfile(){
   const score=getScore(),streak=getStreak();
   const totalMastered=VOCAB.reduce((s,c)=>s+getMastered(c.id).length,0);
@@ -1291,23 +1287,23 @@ function renderProfile(){
   const level=Math.floor(score/100)+1;
   document.getElementById('profileLevel').textContent=`Lv.${level}`;
   document.getElementById('profileStats').innerHTML=`
-    <div class="stat-card glass"><div class="val" style="color:var(--accent)">${score}</div><div class="label">总积分</div></div>
-    <div class="stat-card glass"><div class="val" style="color:var(--accent3)">${totalMastered}/${totalWords}</div><div class="label">已掌握</div></div>
-    <div class="stat-card glass"><div class="val" style="color:var(--accent4)">${streak}天</div><div class="label">连续打卡</div></div>`;
+    <div class="stat-card glass"><div class="val" style="color:var(--accent)">${score}</div><div class="label">鎬荤Н鍒?/div></div>
+    <div class="stat-card glass"><div class="val" style="color:var(--accent3)">${totalMastered}/${totalWords}</div><div class="label">宸叉帉鎻?/div></div>
+    <div class="stat-card glass"><div class="val" style="color:var(--accent4)">${streak}澶?/div><div class="label">杩炵画鎵撳崱</div></div>`;
   const badges=[
-    {icon:'🌱',name:'初学者',desc:'完成首次学习',earned:totalMastered>0},
-    {icon:'🔥',name:'连续3天',desc:'打卡3天不间断',earned:streak>=3},
-    {icon:'📖',name:'学者',desc:'掌握20个单词',earned:totalMastered>=20},
-    {icon:'🏆',name:'大师',desc:'掌握全部单词',earned:totalMastered>=totalWords},
-    {icon:'💎',name:'百分俱乐部',desc:'积分达到100',earned:score>=100},
-    {icon:'👑',name:'千分王者',desc:'积分达到1000',earned:score>=1000}
+    {icon:'馃尡',name:'鍒濆鑰?,desc:'瀹屾垚棣栨瀛︿範',earned:totalMastered>0},
+    {icon:'馃敟',name:'杩炵画3澶?,desc:'鎵撳崱3澶╀笉闂存柇',earned:streak>=3},
+    {icon:'馃摉',name:'瀛﹁€?,desc:'鎺屾彙20涓崟璇?,earned:totalMastered>=20},
+    {icon:'馃弳',name:'澶у笀',desc:'鎺屾彙鍏ㄩ儴鍗曡瘝',earned:totalMastered>=totalWords},
+    {icon:'馃拵',name:'鐧惧垎淇变箰閮?,desc:'绉垎杈惧埌100',earned:score>=100},
+    {icon:'馃憫',name:'鍗冨垎鐜嬭€?,desc:'绉垎杈惧埌1000',earned:score>=1000}
   ];
-  let bh='';badges.forEach(b=>{bh+=`<div class="badge-card${b.earned?' earned':''}"><div class="icon">${b.earned?b.icon:'🔒'}</div><div class="name">${b.name}</div><div class="desc">${b.desc}</div></div>`});
+  let bh='';badges.forEach(b=>{bh+=`<div class="badge-card${b.earned?' earned':''}"><div class="icon">${b.earned?b.icon:'馃敀'}</div><div class="name">${b.name}</div><div class="desc">${b.desc}</div></div>`});
   document.getElementById('badgeGrid').innerHTML=bh;
   document.getElementById('dailyTasks').innerHTML='';
 }
 
-// ====== 初始化 ======
+// ====== 鍒濆鍖?======
 checkAuth();
 </script>
 </body>
